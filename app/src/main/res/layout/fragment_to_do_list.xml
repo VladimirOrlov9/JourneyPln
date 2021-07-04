@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".model.fragments.ToDoListFragment">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/todo_list_recycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/new_task_cardview"
+        android:layout_marginHorizontal="6dp"
+        android:layout_marginTop="6dp"
+        android:nestedScrollingEnabled="true" />
+
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/new_task_cardview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="6dp"
+        android:elevation="6dp"
+        android:visibility="visible"
+        app:cardCornerRadius="8dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/new_task_name"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginHorizontal="10dp"
+            android:layout_toStartOf="@+id/new_task_apply_btn"
+            android:hint="@string/new_task"
+            app:endIconDrawable="@drawable/ic_baseline_add_24"
+            app:endIconMode="custom"
+            app:errorEnabled="true"
+            app:errorTextColor="@color/st4"
+            app:startIconDrawable="@drawable/ic_baseline_cruelty_free_24">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="5" />
+        </com.google.android.material.textfield.TextInputLayout>
+    </androidx.cardview.widget.CardView>
+
+
+</RelativeLayout>

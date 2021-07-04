@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/my_nav"
+    app:startDestination="@id/tripsFragment">
+
+    <fragment
+        android:id="@+id/tripsFragment"
+        android:name="com.spbstu.journeypln.model.fragments.TripsFragment"
+        android:label="fragment_trips"
+        tools:layout="@layout/fragment_trips" >
+        <action
+            android:id="@+id/action_tripsFragment_to_creationNewTripFragment"
+            app:destination="@id/creationNewTripFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_tripsFragment_to_hotelsFragment"
+            app:destination="@id/hotelsFragment" />
+        <action
+            android:id="@+id/action_tripsFragment_to_allTripsFragment"
+            app:destination="@id/allTripsFragment"
+            app:enterAnim="@anim/nav_default_enter_anim"
+            app:exitAnim="@anim/nav_default_exit_anim" />
+        <action
+            android:id="@+id/action_tripsFragment_to_aboutFragment2"
+            app:destination="@id/aboutFragment" />
+        <action
+            android:id="@+id/action_tripsFragment_to_thisTripFragment"
+            app:destination="@id/thisTripFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/creationNewTripFragment"
+        android:name="com.spbstu.journeypln.model.fragments.CreationNewTripFragment"
+        android:label="fragment_creation_new_trip"
+        tools:layout="@layout/fragment_creation_new_trip" />
+    <fragment
+        android:id="@+id/hotelsFragment"
+        android:name="com.spbstu.journeypln.model.fragments.HotelsFragment"
+        android:label="fragment_hotels"
+        tools:layout="@layout/fragment_hotels" />
+    <fragment
+        android:id="@+id/allTripsFragment"
+        android:name="com.spbstu.journeypln.model.fragments.AllTripsFragment"
+        android:label="fragment_all_trips"
+        tools:layout="@layout/fragment_all_trips" >
+        <action
+            android:id="@+id/action_allTripsFragment_to_thisTripFragment2"
+            app:destination="@id/thisTripFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/thisTripFragment"
+        android:name="com.spbstu.journeypln.model.fragments.ThisTripFragment"
+        android:label="fragment_this_trip"
+        tools:layout="@layout/fragment_this_trip" >
+        <action
+            android:id="@+id/action_thisTripFragment_to_editTripFragment"
+            app:destination="@id/editTripFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editTripFragment"
+        android:name="com.spbstu.journeypln.model.fragments.EditTripFragment"
+        android:label="EditTripFragment" />
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="com.spbstu.journeypln.model.fragments.AboutFragment"
+        android:label="fragment_about"
+        tools:layout="@layout/fragment_about" />
+</navigation>

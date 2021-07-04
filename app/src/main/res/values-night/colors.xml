@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="card_back">#2D000000</color>
+    <color name="st21">#384E78</color>
+
+    <color name="st1">#5874DC</color>
+    <color name="st2">#384E78</color>
+
+    <color name="login_up">#384E78</color>
+    <color name="login_down">#5874DC</color>
+</resources>

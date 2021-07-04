@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">JourneyPln</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="add_new_trip">Добавить новую поездку.</string>
+    <string name="trip_image">Изображение поездки</string>
+    <string name="upload_image">Загрузить изображение</string>
+    <string name="trip_name">Название поездки</string>
+    <string name="start_trip_date">Дата начала поездки</string>
+    <string name="end_trip_date">Дата окончания поездки</string>
+    <string name="save">Сохранить</string>
+    <string name="save_trip_info">Сохранить информацию о поездке</string>
+    <string name="destination_point">Страна</string>
+    <string name="clear_start_trip_date_field">Очистить поле даты</string>
+    <string name="clear_destination_point_field">Очистить поле места назначения</string>
+    <string name="description">Описание</string>
+    <string name="city">Город</string>
+
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Электронная почта</string>
+    <string name="prompt_password">Пароль</string>
+    <string name="action_sign_in">Войти или зарегистрироваться</string>
+    <string name="action_sign_in_short">Войти</string>
+    <string name="welcome">"Добро пожаловать!"</string>
+    <string name="invalid_username">Недопустимое имя пользователя</string>
+    <string name="invalid_password">Пароль должен иметь >5 символов</string>
+    <string name="login_failed">"Ошибка входа"</string>
+    <string name="closest_trip">Ближайшая поездка</string>
+    <string name="change">Изменить</string>
+    <string name="logout">Выйти</string>
+
+    <string name="close">Закрыть</string>
+    <string name="choose_image">Выберите изображение</string>
+    <string name="last_trips">Последняя поездка</string>
+    <string name="no_last_trips">Нет прошедших поездок</string>
+    <string name="no_closest_trips">Нет ближайших поездок</string>
+    <string name="gallery">Галерея</string>
+    <string name="camera">Камера</string>
+    <string name="edit_current_trip">Корректировать поездку.</string>
+
+    <string name="destination">Место назначения</string>
+    <string name="date">Дата</string>
+    <string name="add_new_task_to_to_do_list">Добавить новую задачу в списко дел</string>
+    <string name="new_task">Новая заметка</string>
+    <string name="category">Категория</string>
+    <string name="cloth">Вещь</string>
+    <string name="more_actions">Больше действий</string>
+    <string name="weight">Вес</string>
+    <string name="name">Название</string>
+    <string name="new_cloth">Новая вещь</string>
+    <string name="new_category">Новая категория</string>
+    <string name="add">Добавить</string>
+    <string name="count">Количество:</string>
+    <string name="weight_doublepoint">Вес:</string>
+    <string name="edit">Изменить</string>
+    <string name="delete">Удалить</string>
+    <string name="revert">Отмена</string>
+    <string name="progress">Прогресс</string>
+    <string name="clothes_packed">Вещей собрано</string>
+    <string name="todo_done">Дел сделано</string>
+    <string name="delete_category">Удалить категорию</string>
+    <string name="available_weight">Допустимый вес багажа</string>
+    <string name="signin_with">Войти с помощью:</string>
+    <string name="journey_planning">Journey Planning</string>
+
+    <string name="api_key">AIzaSyBD2b0aPddSt1x1FmnX11m9oK6uBY94LQA</string>
+    <string name="places_api_key">AIzaSyA7wYHfQPU9fwtQALlC8FrxEcBYIEK1ke4</string>
+    <string name="weather_api_key">ae9bd2d1b9bbaa165c85a85cc3cee414</string>
+
+    <string name="about">Сведения</string>
+    <string name="hotels">Отели</string>
+    <string name="trips">Поездки</string>
+    <string name="all_trips">Все поездки</string>
+    <string name="current_trip">Текущая поездка</string>
+    <string name="create_trip">Создать поездку</string>
+    <string name="about_text">Для обратной связи используйте данную электронную почту:</string>
+</resources>

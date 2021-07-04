@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "813307521273",
+    "firebase_url": "https://journeypln-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "journeypln",
+    "storage_bucket": "journeypln.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:813307521273:android:96c246c9683c5bf10f5a28",
+        "android_client_info": {
+          "package_name": "com.spbstu.journeypln"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "813307521273-mcjs9ksjlm1v26dg9vhma830cr2di2c6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.spbstu.journeypln",
+            "certificate_hash": "ee4b658d9d908ab3bbfebbbe2ca4c736dd2f3b34"
+          }
+        },
+        {
+          "client_id": "813307521273-8vb7512rj25eu08r575mmkqo8pk96udk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyzlAlOypgNsZGZPOSRHPLUdQ1m0325CA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "813307521273-8vb7512rj25eu08r575mmkqo8pk96udk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

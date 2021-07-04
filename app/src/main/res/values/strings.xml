@@ -1,0 +1,73 @@
+<resources>
+    <string name="app_name">JourneyPln</string>
+    <integer name="com_vk_sdk_AppId">7857698</integer>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="add_new_trip">Add new trip.</string>
+    <string name="trip_image">Trip image</string>
+    <string name="upload_image">Upload image</string>
+    <string name="trip_name">Trip name</string>
+    <string name="start_trip_date">Trip start date</string>
+    <string name="end_trip_date">Trip end date</string>
+    <string name="save">Save</string>
+    <string name="save_trip_info">Save trip info</string>
+    <string name="destination_point">Country</string>
+    <string name="clear_start_trip_date_field">Clear start trip date field</string>
+    <string name="clear_destination_point_field">Clear destination point field</string>
+    <string name="description">Description</string>
+    <string name="city">City</string>
+
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="closest_trip">Closest trip</string>
+    <string name="change">Edit</string>
+    <string name="logout">Logout</string>
+
+    <string name="close">Close</string>
+    <string name="choose_image">Choose image</string>
+    <string name="last_trips">Last trip</string>
+    <string name="no_last_trips">No last trips</string>
+    <string name="no_closest_trips">No closest trips</string>
+    <string name="gallery">Gallery</string>
+    <string name="camera">Camera</string>
+    <string name="edit_current_trip">Edit current trip.</string>
+
+   <!-- <string name="api_key">AIzaSyBD2b0aPddSt1x1FmnX11m9oK6uBY94LQA</string>-->
+    <string name="destination">Destination</string>
+    <string name="date">Date</string>
+    <string name="add_new_task_to_to_do_list">Add new task to to-do list</string>
+    <string name="new_task">New note</string>
+    <string name="category">Category</string>
+    <string name="cloth">Cloth</string>
+    <string name="more_actions">More</string>
+    <string name="weight">Weight</string>
+    <string name="name">Name</string>
+    <string name="new_cloth">New cloth</string>
+    <string name="new_category">New category</string>
+    <string name="add">Add</string>
+    <string name="count">Count:</string>
+    <string name="weight_doublepoint">Weight:</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="revert">Discard</string>
+    <string name="progress">Progress</string>
+    <string name="clothes_packed">Clothes packed</string>
+    <string name="todo_done">Deeds done</string>
+    <string name="delete_category">Delete category</string>
+    <string name="available_weight">Allowable baggage weight</string>
+    <string name="signin_with">Login with:</string>
+    <string name="journey_planning">Journey Planning</string>
+    <string name="about">About</string>
+    <string name="hotels">Hotels</string>
+    <string name="trips">Trips</string>
+    <string name="all_trips">All trips</string>
+    <string name="current_trip">Current trip</string>
+    <string name="create_trip">Create trip</string>
+    <string name="about_text">For feedback, use this email:</string>
+</resources>
