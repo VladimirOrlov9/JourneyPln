@@ -100,8 +100,6 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
             presenter.openGallery()
         }
 
-        presenter.generateImageAttributes()
-
         return view
     }
 
