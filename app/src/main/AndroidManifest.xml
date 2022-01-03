@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.spbstu.journeypln">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<!--    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />-->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
@@ -25,18 +25,19 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".model.activities.LoginActivity">
+        <activity android:name=".model.activities.MainActivity"
+            android:theme="@style/Theme.JourneyPln"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".model.activities.MainActivity"
-            android:theme="@style/Theme.JourneyPln">
+<!--        <activity-->
+<!--            android:name=".model.activities.LoginActivity">-->
 
-        </activity>
+<!--        </activity>-->
 
         <provider
             android:name="androidx.core.content.FileProvider"

@@ -9,17 +9,22 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.AnyRes
 import androidx.core.content.FileProvider
+import androidx.room.Room
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.spbstu.journeypln.R
-import com.spbstu.journeypln.data.firebase.pojo.Trip
+import com.spbstu.journeypln.data.room.databases.TripsDb
+import com.spbstu.journeypln.data.room.entities.Category
+import com.spbstu.journeypln.data.room.entities.Trip
 import com.spbstu.journeypln.views.CreationNewTripView
+import kotlinx.coroutines.*
 import moxy.MvpPresenter
 import java.io.File
 import java.io.InputStream
+import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,10 +32,6 @@ import java.util.*
 class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
 
     private lateinit var applicationContext: Context
-
-    private val database = Firebase.database
-    private val signInAccount = FirebaseAuth.getInstance()
-    private val storage = FirebaseStorage.getInstance()
 
     private var startDate: Long? = System.currentTimeMillis()
     private var endDate: Long? = System.currentTimeMillis()
@@ -46,9 +47,12 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
         timeZone = TimeZone.getTimeZone("UTC")
     }
 
+    private lateinit var db: TripsDb
 
-    fun setApplicationContext(context: Context) {
+
+    fun setApplicationContext(context: Context, db: TripsDb) {
         applicationContext = context
+        this.db = db
     }
 
     fun setDestinationInfo(id: String, name: String, coords: LatLng) {
@@ -115,43 +119,45 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
             imageUri = getUriToDrawable(applicationContext, R.drawable.unnamed)
         }
 
-        val databaseReference = database.getReference("users/${signInAccount.uid}")
         val mDestinationId = destinationId
         val mDestinationName = destinationName
         val mDestinationCoords = destinationCoords
         val startDate = startDate
         val endDate = endDate
 
-        val storageRef = storage.getReference("users/${signInAccount.uid}").child(fileName)
-        storageRef.putFile(imageUri)
-                .addOnSuccessListener {
-                    viewState.hideAcceptFAB()
-                    viewState.showToast("Upload successful!")
+        try {
 
-                    storageRef.downloadUrl.addOnSuccessListener { uri ->
-                        val newTrip = Trip(
-                                name = name, placeId = mDestinationId, placeName = mDestinationName,
-                                placeLat = mDestinationCoords.latitude, placeLong = mDestinationCoords.longitude,
-                                startDate = startDate, endDate = endDate, description = description,
-                                imageUri = uri.toString(), weight = weight
-                        )
-                        val key = databaseReference.push().key.toString()
-                        databaseReference.child(key).setValue(newTrip)
+               GlobalScope.launch {
+                   launch(Dispatchers.IO) {
+                       val tripsDao = db.tripsDao()
+                       val categoriesDao = db.categoriesDao()
 
-                        for (category in defCategoriesList) {
-                            databaseReference.child("$key/categories").push().setValue(category)
-                        }
+                       val newTrip = Trip(
+                           name = name, placeId = mDestinationId, placeName = mDestinationName,
+                           placeLat = mDestinationCoords.latitude, placeLong = mDestinationCoords.longitude,
+                           startDate = startDate, endDate = endDate, description = description,
+                           imageUri = imageUri.toString(), weight = weight
+                       )
 
-                        viewState.getBackByNavController()
-                    }
-                }
-                .addOnFailureListener{ ex ->
-                    viewState.showToast(ex.message.toString())
-                }
-                .addOnProgressListener { snapshot ->
-                    val progress = (100 * snapshot.bytesTransferred) / snapshot.totalByteCount
-                    viewState.updateProgressLine(progress = progress.toInt())
-                }
+                       val id: Long = tripsDao.insertTrip(trip = newTrip)
+
+                       for (category in defCategoriesList) {
+                           categoriesDao.insertCategory(
+                               Category(
+                                   name = category,
+                                   tripId = id
+                               )
+                           )
+                       }
+                   }
+                   launch(Dispatchers.Main) {
+                       viewState.getBackByNavController()
+                   }
+               }
+        }
+        catch (ex: Exception) {
+            viewState.showToast(ex.message.toString())
+        }
     }
 
     fun drawImageByUri() {

@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
+import androidx.room.Room
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -23,6 +24,7 @@ import com.google.android.material.floatingactionbutton.ExtendedFloatingActionBu
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.spbstu.journeypln.R
 import com.spbstu.journeypln.data.Keys
+import com.spbstu.journeypln.data.room.databases.TripsDb
 import com.spbstu.journeypln.model.activities.MainActivity
 import com.spbstu.journeypln.presenters.fragmentPresenters.CreationNewTripPresenter
 import com.spbstu.journeypln.views.CreationNewTripView
@@ -51,7 +53,15 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        presenter.setApplicationContext(requireActivity().applicationContext)
+
+        val db = Room.databaseBuilder(
+            requireActivity().applicationContext,
+            TripsDb::class.java, "database"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+
+        presenter.setApplicationContext(requireActivity().applicationContext, db)
 
     }
 
