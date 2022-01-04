@@ -7,6 +7,7 @@ import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
 import moxy.viewstate.strategy.StateStrategyType
+import java.io.File
 
 interface TripsView: MvpView {
 
@@ -25,5 +26,5 @@ interface TripsView: MvpView {
     @StateStrategyType(value = AddToEndSingleStrategy::class)
     fun showToast(text: String)
     @StateStrategyType(value = SkipStrategy::class)
-    fun openTrip(id: String)
+    fun openTrip(id: Long)
 }

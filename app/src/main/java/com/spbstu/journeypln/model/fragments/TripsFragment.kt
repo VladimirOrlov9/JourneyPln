@@ -1,26 +1,20 @@
 package com.spbstu.journeypln.model.fragments
 
-import android.app.Activity
-import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.cardview.widget.CardView
-import androidx.customview.widget.ViewDragHelper
 import androidx.navigation.Navigation
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import androidx.room.Room
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.spbstu.journeypln.R
+import com.spbstu.journeypln.data.room.databases.TripsDb
 import com.spbstu.journeypln.model.activities.MainActivity
 import com.spbstu.journeypln.presenters.fragmentPresenters.TripsPresenter
 import com.spbstu.journeypln.views.TripsView
@@ -88,6 +82,19 @@ class TripsFragment : MvpAppCompatFragment(), TripsView {
         }
 
         return view
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val db = Room.databaseBuilder(
+            requireActivity().applicationContext,
+            TripsDb::class.java, "database"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+
+        presenter.setDB(db)
     }
 
     override fun onStart() {
@@ -186,10 +193,11 @@ class TripsFragment : MvpAppCompatFragment(), TripsView {
         currentTripCardVIew.visibility = visibility
     }
 
-    override fun openTrip(id: String) {
+    override fun openTrip(id: Long) {
         val bundle = Bundle()
-        bundle.putString("id", id)
+        bundle.putLong("id", id)
         Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.thisTripFragment, bundle)
+        //TODO open trip long
     }
 
 }

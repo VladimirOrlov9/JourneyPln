@@ -8,10 +8,10 @@ import androidx.room.PrimaryKey
 data class Trip (
     @PrimaryKey(autoGenerate = true) val uid: Long = 0,
     @ColumnInfo(name = "name") val name: String,
-    @ColumnInfo(name = "placeId") val placeId: String,
+//    @ColumnInfo(name = "placeId") val placeId: String,
     @ColumnInfo(name = "placeName") val placeName: String,
-    @ColumnInfo(name = "placeLat") val placeLat: Double,
-    @ColumnInfo(name = "placeLong") val placeLong: Double,
+//    @ColumnInfo(name = "placeLat") val placeLat: Double,
+//    @ColumnInfo(name = "placeLong") val placeLong: Double,
     @ColumnInfo(name = "startDate") val startDate: Long?,
     @ColumnInfo(name = "endDate") val endDate: Long?,
     @ColumnInfo(name = "description") val description: String,

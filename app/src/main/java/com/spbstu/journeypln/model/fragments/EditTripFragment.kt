@@ -39,7 +39,7 @@ class EditTripFragment: MvpAppCompatFragment(), EditTripView {
     private lateinit var descriptionTxt: EditText
     private lateinit var clearNameBtn: ImageButton
     private lateinit var clearDescriptionBtn: ImageButton
-    private lateinit var editDestinationBtn: Button
+//    private lateinit var editDestinationBtn: Button
     private lateinit var cameraButton: Button
     private lateinit var galleryButton: Button
     private lateinit var datePicker: Button
@@ -76,17 +76,17 @@ class EditTripFragment: MvpAppCompatFragment(), EditTripView {
             descriptionTxt.setText("")
         }
 
-        editDestinationBtn.setOnClickListener {
-            val fields = listOf(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG)
-            if (!Places.isInitialized()) {
-                Places.initialize(requireContext(), Keys.GOOGLE_AUTOCOMPLETE_API_KEY)
-            }
-
-            // Start the autocomplete intent.
-            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
-                .build(requireActivity())
-            startActivityForResult(intent, NEW_DESTINATION)
-        }
+//        editDestinationBtn.setOnClickListener {
+//            val fields = listOf(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG)
+//            if (!Places.isInitialized()) {
+//                Places.initialize(requireContext(), Keys.GOOGLE_AUTOCOMPLETE_API_KEY)
+//            }
+//
+//            // Start the autocomplete intent.
+//            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+//                .build(requireActivity())
+//            startActivityForResult(intent, NEW_DESTINATION)
+//        }
 
         cameraButton.setOnClickListener {
             presenter.openCamera()
@@ -188,7 +188,7 @@ class EditTripFragment: MvpAppCompatFragment(), EditTripView {
 
         clearNameBtn = view.findViewById(R.id.trip_name_clear_button)
         clearDescriptionBtn = view.findViewById(R.id.trip_description_button)
-        editDestinationBtn = view.findViewById(R.id.pick_destination_place_btn)
+//        editDestinationBtn = view.findViewById(R.id.pick_destination_place_btn)
         cameraButton = view.findViewById(R.id.image_camera_button)
         galleryButton = view.findViewById(R.id.image_gallery_button)
         datePicker = view.findViewById(R.id.pick_date_btn)

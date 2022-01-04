@@ -9,12 +9,6 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.annotation.AnyRes
 import androidx.core.content.FileProvider
-import androidx.room.Room
-import com.google.android.gms.maps.model.LatLng
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
 import com.spbstu.journeypln.R
 import com.spbstu.journeypln.data.room.databases.TripsDb
 import com.spbstu.journeypln.data.room.entities.Category
@@ -23,7 +17,6 @@ import com.spbstu.journeypln.views.CreationNewTripView
 import kotlinx.coroutines.*
 import moxy.MvpPresenter
 import java.io.File
-import java.io.InputStream
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
@@ -37,9 +30,9 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
     private var endDate: Long? = System.currentTimeMillis()
     private lateinit var fileName: String
     private lateinit var imageUri: Uri
-    private lateinit var destinationId: String
+//    private lateinit var destinationId: String
     private lateinit var destinationName: String
-    private lateinit var destinationCoords: LatLng
+//    private lateinit var destinationCoords: LatLng
 
     private val defCategoriesList: List<String> = listOf("Верхняя одежда", "Одежда", "Нижнее белье", "Документы")
 
@@ -55,13 +48,11 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
         this.db = db
     }
 
-    fun setDestinationInfo(id: String, name: String, coords: LatLng) {
-        this.destinationId = id
-        this.destinationName = name
-        this.destinationCoords = coords
-
-        viewState.setDestinationText(destinationName)
-    }
+//    fun setDestinationInfo(name: String) {
+//        this.destinationName = name
+//
+//        viewState.setDestinationText(destinationName)
+//    }
 
     private fun generateFileUri(name: String): Uri {
         val directory = File(
@@ -101,7 +92,7 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
         viewState.startTakePictureFromGalleryIntent(pickPhotoIntent)
     }
 
-    fun getUriToDrawable(
+    private fun getUriToDrawable(
         context: Context,
         @AnyRes drawableId: Int
     ): Uri {
@@ -113,15 +104,14 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
         )
     }
 
-    fun acceptConfigAndCreateTrip(name: String, description: String, weight: Double) {
+    fun acceptConfigAndCreateTrip(name: String, description: String, weight: Double, destination: String) {
         if (!this::imageUri.isInitialized) {
             fileName = "paris.png"
             imageUri = getUriToDrawable(applicationContext, R.drawable.unnamed)
         }
 
-        val mDestinationId = destinationId
-        val mDestinationName = destinationName
-        val mDestinationCoords = destinationCoords
+//        val mDestinationId = destinationId
+        //        val mDestinationCoords = destinationCoords
         val startDate = startDate
         val endDate = endDate
 
@@ -133,10 +123,13 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
                        val categoriesDao = db.categoriesDao()
 
                        val newTrip = Trip(
-                           name = name, placeId = mDestinationId, placeName = mDestinationName,
-                           placeLat = mDestinationCoords.latitude, placeLong = mDestinationCoords.longitude,
-                           startDate = startDate, endDate = endDate, description = description,
-                           imageUri = imageUri.toString(), weight = weight
+                           name = name,
+                           startDate = startDate,
+                           endDate = endDate,
+                           description = description,
+                           imageUri = imageUri.toString(),
+                           weight = weight,
+                           placeName = destination
                        )
 
                        val id: Long = tripsDao.insertTrip(trip = newTrip)

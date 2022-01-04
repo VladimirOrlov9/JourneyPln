@@ -11,7 +11,7 @@ import com.spbstu.journeypln.data.room.entities.Trip
 
 @Database(
     entities = [Trip::class, Cloth::class, TodoTask::class, Category::class],
-    version = 3
+    version = 4
 )
 abstract class TripsDb: RoomDatabase() {
 

@@ -10,8 +10,8 @@ import moxy.viewstate.strategy.StateStrategyType
 
 interface CreationNewTripView: MvpView {
 
-    @StateStrategyType(value = AddToEndSingleStrategy::class)
-    fun setDestinationText(text: String)
+//    @StateStrategyType(value = AddToEndSingleStrategy::class)
+//    fun setDestinationText(text: String)
 
     @StateStrategyType(value = AddToEndSingleStrategy::class)
     fun hideAcceptFAB()

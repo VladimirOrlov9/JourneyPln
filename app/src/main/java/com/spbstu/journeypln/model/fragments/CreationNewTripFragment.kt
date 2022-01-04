@@ -1,10 +1,7 @@
 package com.spbstu.journeypln.model.fragments
 
-import android.app.Activity
 import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
-import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -13,17 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.Navigation
-import androidx.navigation.findNavController
 import androidx.room.Room
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.spbstu.journeypln.R
-import com.spbstu.journeypln.data.Keys
 import com.spbstu.journeypln.data.room.databases.TripsDb
 import com.spbstu.journeypln.model.activities.MainActivity
 import com.spbstu.journeypln.presenters.fragmentPresenters.CreationNewTripPresenter
@@ -47,8 +38,8 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
     private lateinit var indicatorLine: LinearProgressIndicator
     private lateinit var cameraButton: Button
     private lateinit var galleryButton: Button
-    private lateinit var destinationPlaceTxt: TextView
-    private lateinit var pickDestinationPlaceBtn: Button
+    private lateinit var destinationPlaceTxt: EditText
+//    private lateinit var pickDestinationPlaceBtn: Button
     private lateinit var pickWeightTxt: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -73,30 +64,31 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
         (activity as MainActivity).supportActionBar?.title = "Новая поездка"
         init(view)
 
-        pickDestinationPlaceBtn.setOnClickListener {
-            val fields = listOf(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG)
-            if (!Places.isInitialized()) {
-                Places.initialize(requireContext(), Keys.GOOGLE_AUTOCOMPLETE_API_KEY)
-            }
-
-            // Start the autocomplete intent.
-            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
-                .build(requireActivity())
-            startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
-        }
+//        pickDestinationPlaceBtn.setOnClickListener {
+//            val fields = listOf(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG)
+//            if (!Places.isInitialized()) {
+//                Places.initialize(requireContext(), Keys.GOOGLE_AUTOCOMPLETE_API_KEY)
+//            }
+//
+//            // Start the autocomplete intent.
+//            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
+//                .build(requireActivity())
+//            startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
+//        }
 
         setupDatePicker()
 
         acceptFAB.setOnClickListener {
             val name = tripName.text.toString()
             val description = descriptionText.text.toString()
-            val destination = destinationPlaceTxt.text.toString()
+//            val destination = destinationPlaceTxt.text.toString()
             val date = dateTxt.text.toString()
             val weight = pickWeightTxt.text.toString()
+            val dest = destinationPlaceTxt.text.toString()
 
-            if (name.isNotEmpty() && description.isNotEmpty() && destination.isNotEmpty()
+            if (name.isNotEmpty() && description.isNotEmpty()
                     && date.isNotEmpty() && weight.isNotEmpty()) {
-                presenter.acceptConfigAndCreateTrip(name, description, weight.toDouble())
+                presenter.acceptConfigAndCreateTrip(name, description, weight.toDouble(), dest)
             } else {
                 showToast("Не все поля заполнены!")
             }
@@ -124,7 +116,7 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
         galleryButton = view.findViewById(R.id.image_gallery_button)
         cameraButton = view.findViewById(R.id.image_camera_button)
         destinationPlaceTxt = view.findViewById(R.id.destination_place_txt)
-        pickDestinationPlaceBtn = view.findViewById(R.id.pick_destination_place_btn)
+//        pickDestinationPlaceBtn = view.findViewById(R.id.pick_destination_place_btn)
         pickWeightTxt = view.findViewById(R.id.trip_weight_editText)
     }
 
@@ -153,15 +145,15 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
                         }
                     }
                 }
-                AUTOCOMPLETE_REQUEST_CODE -> {
-                    if (resultCode == RESULT_OK && data != null) {
-                        data.let {
-                            val place = Autocomplete.getPlaceFromIntent(data)
-                            if (place.id != null && place.address != null && place.latLng != null) {
-                                presenter.setDestinationInfo(place.id!!, place.address!!, place.latLng!!)
-                            }                        }
-                    }
-                }
+//                AUTOCOMPLETE_REQUEST_CODE -> {
+//                    if (resultCode == RESULT_OK && data != null) {
+//                        data.let {
+//                            val place = Autocomplete.getPlaceFromIntent(data)
+//                            if (place.id != null && place.address != null && place.latLng != null) {
+//                                presenter.setDestinationInfo(place.id!!, place.address!!, place.latLng!!)
+//                            }                        }
+//                    }
+//                }
             }
         }
     }
@@ -197,9 +189,9 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
         requireActivity().startActivityForResult(intent, 1)
     }
 
-    override fun setDestinationText(text: String) {
-        destinationPlaceTxt.text = text
-    }
+//    override fun setDestinationText(text: String) {
+//        destinationPlaceTxt.text = text
+//    }
 
 
     override fun hideAcceptFAB() {
