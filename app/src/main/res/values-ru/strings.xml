@@ -63,9 +63,9 @@
     <string name="signin_with">Войти с помощью:</string>
     <string name="journey_planning">Journey Planning</string>
 
-    <string name="api_key">AIzaSyBD2b0aPddSt1x1FmnX11m9oK6uBY94LQA</string>
-    <string name="places_api_key">AIzaSyA7wYHfQPU9fwtQALlC8FrxEcBYIEK1ke4</string>
-    <string name="weather_api_key">ae9bd2d1b9bbaa165c85a85cc3cee414</string>
+<!--    <string name="api_key">AIzaSyBD2b0aPddSt1x1FmnX11m9oK6uBY94LQA</string>-->
+<!--    <string name="places_api_key">AIzaSyA7wYHfQPU9fwtQALlC8FrxEcBYIEK1ke4</string>-->
+<!--    <string name="weather_api_key">ae9bd2d1b9bbaa165c85a85cc3cee414</string>-->
 
     <string name="about">Сведения</string>
     <string name="hotels">Отели</string>
