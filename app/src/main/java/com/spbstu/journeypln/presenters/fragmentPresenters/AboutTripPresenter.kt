@@ -10,7 +10,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.spbstu.journeypln.R
-import com.spbstu.journeypln.data.Keys
+//import com.spbstu.journeypln.data.Keys
 import com.spbstu.journeypln.data.firebase.pojo.Trip
 import com.spbstu.journeypln.data.retrofit.WeatherApi
 import com.spbstu.journeypln.data.retrofit.pojo.weather.WeatherMain
@@ -77,7 +77,7 @@ class AboutTripPresenter: MvpPresenter<AboutTripView>() {
     }
 
     private fun loadWeatherStats(lat: Double, lon: Double) {
-        val weatherApiKey = Keys.WEATHER_API_KEY
+        val weatherApiKey = "" //keys
         val weatherAPI: WeatherApi = client.create(WeatherApi::class.java)
 
         val call: Call<WeatherMain> = weatherAPI.getWeather(lat, lon, weatherApiKey)

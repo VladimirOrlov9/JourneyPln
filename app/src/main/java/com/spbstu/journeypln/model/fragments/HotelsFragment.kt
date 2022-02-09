@@ -29,7 +29,7 @@ import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
 import com.spbstu.journeypln.R
-import com.spbstu.journeypln.data.Keys
+//import com.spbstu.journeypln.data.Keys
 import com.spbstu.journeypln.data.retrofit.supportClasses.Coords
 import com.spbstu.journeypln.data.retrofit.PlacesApi
 import com.spbstu.journeypln.data.retrofit.pojo.places.Places
