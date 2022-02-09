@@ -3,6 +3,13 @@ plugins {
     id 'kotlin-android'
     id 'kotlin-kapt'
     id 'com.google.gms.google-services'
+    id "org.sonarqube" version "3.3"
+}
+
+sonarqube {
+    properties {
+        property "sonar.projectKey", "JourneyPln"
+    }
 }
 
 android {
