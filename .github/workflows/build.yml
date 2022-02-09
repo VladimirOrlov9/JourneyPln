@@ -2,7 +2,7 @@ name: Build
 on:
   push:
     branches:
-      - offline_version
+      - master
 
 jobs:
   build:
