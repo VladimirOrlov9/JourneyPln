@@ -17,16 +17,16 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.GoogleMap
-import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter
-import com.google.android.gms.maps.OnMapReadyCallback
-import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+//import com.google.android.gms.location.FusedLocationProviderClient
+//import com.google.android.gms.location.LocationServices
+//import com.google.android.gms.maps.CameraUpdateFactory
+//import com.google.android.gms.maps.GoogleMap
+//import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter
+//import com.google.android.gms.maps.OnMapReadyCallback
+//import com.google.android.gms.maps.SupportMapFragment
+//import com.google.android.gms.maps.model.LatLng
+//import com.google.android.gms.maps.model.Marker
+//import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.Task
 import com.spbstu.journeypln.R
 //import com.spbstu.journeypln.data.Keys
@@ -42,11 +42,11 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class HotelsFragment : Fragment() {
-    private var mMap: GoogleMap? = null
-    private var mTask: Task<Location>? = null
-    private var locationPermissionGranted = false
-    private var client: FusedLocationProviderClient? = null
-    private lateinit var mapFragment: SupportMapFragment
+//    private var mMap: GoogleMap? = null
+//    private var mTask: Task<Location>? = null
+//    private var locationPermissionGranted = false
+//    private var client: FusedLocationProviderClient? = null
+//    private lateinit var mapFragment: SupportMapFragment
 
     private lateinit var retrofit: Retrofit
 //    private val retrofitClient: Retrofit

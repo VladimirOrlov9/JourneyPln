@@ -10,10 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.navigation.Navigation
-import com.google.android.libraries.places.api.Places
-import com.google.android.libraries.places.api.model.Place
-import com.google.android.libraries.places.widget.Autocomplete
-import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+//import com.google.android.libraries.places.api.Places
+//import com.google.android.libraries.places.api.model.Place
+//import com.google.android.libraries.places.widget.Autocomplete
+//import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.progressindicator.LinearProgressIndicator
@@ -141,16 +141,16 @@ class EditTripFragment: MvpAppCompatFragment(), EditTripView {
                 }
                 NEW_DESTINATION -> {
                     if (resultCode == Activity.RESULT_OK && data != null) {
-                        data.let {
-                            val place = Autocomplete.getPlaceFromIntent(data)
-                            if (place.id != null && place.address != null && place.latLng != null) {
-                                presenter.setDestinationInfo(
-                                    place.id!!,
-                                    place.address!!,
-                                    place.latLng!!
-                                )
-                            }
-                        }
+//                        data.let {
+//                            val place = Autocomplete.getPlaceFromIntent(data)
+//                            if (place.id != null && place.address != null && place.latLng != null) {
+//                                presenter.setDestinationInfo(
+//                                    place.id!!,
+//                                    place.address!!,
+//                                    place.latLng!!
+//                                )
+//                            }
+//                        }
                     }
                 }
             }

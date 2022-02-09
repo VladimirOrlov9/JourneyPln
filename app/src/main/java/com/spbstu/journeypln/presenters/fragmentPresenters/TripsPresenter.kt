@@ -45,7 +45,7 @@ class TripsPresenter: MvpPresenter<TripsView>() {
                     launch(Dispatchers.Main) {
                         viewState.boundLastTrip(
                             id.name,
-                            Uri.parse(id.imageUri),
+                            id.imageUri,
                             id.placeName,
                             duration,
                             id.description
@@ -134,6 +134,7 @@ class TripsPresenter: MvpPresenter<TripsView>() {
                 }
             }
         }
+    }
 
 //        val databaseReference = database.getReference("users/${signInAccount.uid}")
 //
@@ -181,7 +182,7 @@ class TripsPresenter: MvpPresenter<TripsView>() {
 //
 //                }
 //        )
-    }
+//}
 
     fun openClosestTrip() {
         viewState.openTrip(closestTripKey)

@@ -1,6 +1,6 @@
 package com.spbstu.journeypln.data.firebase.pojo
 
-import com.google.android.gms.maps.model.LatLng
+//import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.database.Exclude
 
 class Trip (

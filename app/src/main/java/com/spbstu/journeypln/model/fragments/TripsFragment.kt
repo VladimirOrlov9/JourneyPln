@@ -21,6 +21,7 @@ import com.spbstu.journeypln.views.TripsView
 import com.squareup.picasso.Picasso
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
+import java.io.File
 
 
 class TripsFragment : MvpAppCompatFragment(), TripsView {
@@ -107,8 +108,10 @@ class TripsFragment : MvpAppCompatFragment(), TripsView {
 
 
 
-    override fun boundLastTrip(name: String, imageUri: Uri, destination: String,
+    override fun boundLastTrip(name: String, imageUri: String, destination: String,
                                duration: String, description: String) {
+        println(imageUri)
+
         Picasso.with(requireContext())
                 .load(imageUri)
                 .into(lastTripImage)
@@ -125,9 +128,11 @@ class TripsFragment : MvpAppCompatFragment(), TripsView {
 
     override fun boundClosestTrip(name: String, imageUri: Uri, destination: String,
                                   duration: String, description: String) {
-        Picasso.with(requireContext())
+        if (closestTripImage.drawable == null) {
+            Picasso.with(requireContext())
                 .load(imageUri)
                 .into(closestTripImage)
+        }
         closestTripImage.contentDescription = name
         closestTripName.text = name
         closestTripDestination.text = destination
