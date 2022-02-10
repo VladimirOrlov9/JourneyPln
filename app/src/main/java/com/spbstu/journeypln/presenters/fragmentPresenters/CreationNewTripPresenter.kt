@@ -6,7 +6,6 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import android.util.Log
 import androidx.annotation.AnyRes
 import androidx.core.content.FileProvider
 import com.spbstu.journeypln.R
@@ -16,10 +15,13 @@ import com.spbstu.journeypln.data.room.entities.Trip
 import com.spbstu.journeypln.views.CreationNewTripView
 import kotlinx.coroutines.*
 import moxy.MvpPresenter
-import java.io.File
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
+import android.os.Build
+import java.io.*
 
 
 class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
@@ -30,9 +32,6 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
     private var endDate: Long? = System.currentTimeMillis()
     private lateinit var fileName: String
     private lateinit var imageUri: Uri
-//    private lateinit var destinationId: String
-    private lateinit var destinationName: String
-//    private lateinit var destinationCoords: LatLng
 
     private val defCategoriesList: List<String> = listOf("Верхняя одежда", "Одежда", "Нижнее белье", "Документы")
 
@@ -48,48 +47,71 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
         this.db = db
     }
 
-//    fun setDestinationInfo(name: String) {
-//        this.destinationName = name
-//
-//        viewState.setDestinationText(destinationName)
-//    }
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+        val storageDir: File = applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
 
-    private fun generateFileUri(name: String): Uri {
-        val directory = File(
-                Environment
-                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
-                "JourneyPln"
-        )
-        if (!directory.exists()) directory.mkdirs()
-
-        val file = File(
-                directory.path + "/" + name
-        )
-        Log.d("PickPicture", "fileName = $file")
-
-        return FileProvider.getUriForFile(
-                applicationContext,
-                applicationContext.packageName + ".provider",
-                file)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            fileName = absolutePath
+        }
     }
 
-    private fun generateImageAttributes() {
-        fileName = "${System.currentTimeMillis()}_picture.jpg"
-        imageUri = generateFileUri(fileName)
-    }
 
     fun openCamera() {
-        generateImageAttributes()
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-        viewState.startTakePictureIntent(takePictureIntent)
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
+            takePictureIntent.resolveActivity(applicationContext.packageManager)?.also {
+                // Create the File where the photo should go
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    // Error occurred while creating the File
+
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                    imageUri = FileProvider.getUriForFile(
+                        applicationContext,
+                        "com.example.android.fileprovider",
+                        it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
+                    viewState.startTakePictureIntent(takePictureIntent)
+                }
+            }
+        }
     }
 
     fun openGallery() {
-        generateImageAttributes()
-        val pickPhotoIntent = Intent(Intent.ACTION_PICK)
-        pickPhotoIntent.type = "image/*"
-        viewState.startTakePictureFromGalleryIntent(pickPhotoIntent)
+        Intent(Intent.ACTION_PICK).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
+            takePictureIntent.resolveActivity(applicationContext.packageManager)?.also {
+                // Create the File where the photo should go
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    // Error occurred while creating the File
+
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                    imageUri = FileProvider.getUriForFile(
+                        applicationContext,
+                        "com.example.android.fileprovider",
+                        it
+                    )
+                    takePictureIntent.type = "image/*"
+                    viewState.startTakePictureFromGalleryIntent(takePictureIntent)
+                }
+            }
+        }
     }
 
     private fun getUriToDrawable(
@@ -110,8 +132,6 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
             imageUri = getUriToDrawable(applicationContext, R.drawable.unnamed)
         }
 
-//        val mDestinationId = destinationId
-        //        val mDestinationCoords = destinationCoords
         val startDate = startDate
         val endDate = endDate
 
@@ -158,7 +178,20 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
     }
 
     fun drawImageByUri(img: Uri) {
-        imageUri = img
+        val bitmap = if (Build.VERSION.SDK_INT < 28) {
+            MediaStore.Images.Media.getBitmap(
+                applicationContext.contentResolver,
+                img
+            )
+        } else {
+            val source = ImageDecoder.createSource(applicationContext.contentResolver, img)
+            ImageDecoder.decodeBitmap(source)
+        }
+
+
+        val file = applicationContext.contentResolver.openOutputStream(imageUri)
+        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, file)
+
         viewState.updateImage(imageUri)
     }
 

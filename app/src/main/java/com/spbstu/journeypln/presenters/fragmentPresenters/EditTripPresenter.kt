@@ -8,7 +8,6 @@ import android.provider.MediaStore
 import android.util.Log
 import androidx.core.content.FileProvider
 import androidx.core.util.Pair
-//import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError

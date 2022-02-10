@@ -1,6 +1,5 @@
 package com.spbstu.journeypln.model.fragments
 
-import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
@@ -24,10 +23,17 @@ import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import java.io.FileNotFoundException
 
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+
+
 class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
 
     @InjectPresenter
     lateinit var presenter: CreationNewTripPresenter
+
+    private lateinit var someActivityResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var galleryResultLauncher: ActivityResultLauncher<Intent>
 
     private lateinit var datePicker: Button
     private lateinit var dateTxt: TextView
@@ -39,7 +45,6 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
     private lateinit var cameraButton: Button
     private lateinit var galleryButton: Button
     private lateinit var destinationPlaceTxt: EditText
-//    private lateinit var pickDestinationPlaceBtn: Button
     private lateinit var pickWeightTxt: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +59,41 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
 
         presenter.setApplicationContext(requireActivity().applicationContext, db)
 
+        someActivityResultLauncher = registerForActivityResult(
+            StartActivityForResult()
+        ) { result ->
+
+            if (result.resultCode == RESULT_OK) {
+                let {
+                    presenter.drawImageByUri()
+                }
+            }
+        }
+
+        galleryResultLauncher = registerForActivityResult(
+            StartActivityForResult()
+        ) { result ->
+
+            if (result.resultCode == RESULT_OK) {
+
+                val data: Intent? = result.data
+                let {
+                    try {
+                        val selectedImage = data?.data
+                        if (selectedImage != null) {
+                            presenter.drawImageByUri(selectedImage)
+                        }
+                    } catch (ex: FileNotFoundException) {
+                        Toast.makeText(
+                            requireContext(),
+                            "You haven't picked Image",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
+
     }
 
     override fun onCreateView(
@@ -64,24 +104,11 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
         (activity as MainActivity).supportActionBar?.title = "Новая поездка"
         init(view)
 
-//        pickDestinationPlaceBtn.setOnClickListener {
-//            val fields = listOf(Place.Field.ID, Place.Field.ADDRESS, Place.Field.LAT_LNG)
-//            if (!Places.isInitialized()) {
-//                Places.initialize(requireContext(), Keys.GOOGLE_AUTOCOMPLETE_API_KEY)
-//            }
-//
-//            // Start the autocomplete intent.
-//            val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)
-//                .build(requireActivity())
-//            startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
-//        }
-
         setupDatePicker()
 
         acceptFAB.setOnClickListener {
             val name = tripName.text.toString()
             val description = descriptionText.text.toString()
-//            val destination = destinationPlaceTxt.text.toString()
             val date = dateTxt.text.toString()
             val weight = pickWeightTxt.text.toString()
             val dest = destinationPlaceTxt.text.toString()
@@ -116,46 +143,7 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
         galleryButton = view.findViewById(R.id.image_gallery_button)
         cameraButton = view.findViewById(R.id.image_camera_button)
         destinationPlaceTxt = view.findViewById(R.id.destination_place_txt)
-//        pickDestinationPlaceBtn = view.findViewById(R.id.pick_destination_place_btn)
         pickWeightTxt = view.findViewById(R.id.trip_weight_editText)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != RESULT_CANCELED) {
-            when (requestCode) {
-                0 -> {
-                    if (resultCode == RESULT_OK) {
-                        presenter.drawImageByUri()
-                    }
-                }
-                1 -> {
-                    if (resultCode == RESULT_OK && data != null) {
-                        try {
-                            val selectedImage = data.data
-                            if (selectedImage != null) {
-                                presenter.drawImageByUri(selectedImage)
-                            }
-                        } catch (ex: FileNotFoundException) {
-                            Toast.makeText(
-                                requireContext(),
-                                "You haven't picked Image",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                }
-//                AUTOCOMPLETE_REQUEST_CODE -> {
-//                    if (resultCode == RESULT_OK && data != null) {
-//                        data.let {
-//                            val place = Autocomplete.getPlaceFromIntent(data)
-//                            if (place.id != null && place.address != null && place.latLng != null) {
-//                                presenter.setDestinationInfo(place.id!!, place.address!!, place.latLng!!)
-//                            }                        }
-//                    }
-//                }
-            }
-        }
     }
 
     private fun setupDatePicker() {
@@ -182,16 +170,12 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
     }
 
     override fun startTakePictureIntent(intent: Intent) {
-        requireActivity().startActivityForResult(intent, 0)
+        someActivityResultLauncher.launch(intent)
     }
 
     override fun startTakePictureFromGalleryIntent(intent: Intent) {
-        requireActivity().startActivityForResult(intent, 1)
+        galleryResultLauncher.launch(intent)
     }
-
-//    override fun setDestinationText(text: String) {
-//        destinationPlaceTxt.text = text
-//    }
 
 
     override fun hideAcceptFAB() {
@@ -218,9 +202,5 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
 
     override fun setTripDate(date: String) {
         dateTxt.text = date
-    }
-
-    companion object {
-        const val AUTOCOMPLETE_REQUEST_CODE = 112
     }
 }
