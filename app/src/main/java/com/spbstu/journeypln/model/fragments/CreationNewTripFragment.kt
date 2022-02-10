@@ -18,13 +18,13 @@ import com.spbstu.journeypln.data.room.databases.TripsDb
 import com.spbstu.journeypln.model.activities.MainActivity
 import com.spbstu.journeypln.presenters.fragmentPresenters.CreationNewTripPresenter
 import com.spbstu.journeypln.views.CreationNewTripView
-import com.squareup.picasso.Picasso
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import java.io.FileNotFoundException
 
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import com.bumptech.glide.Glide
 
 
 class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
@@ -195,9 +195,10 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
     }
 
     override fun updateImage(img: Uri) {
-        Picasso.with(requireContext())
-                .load(img)
-                .into(tripImage)
+        Glide
+            .with(requireContext())
+            .load(img)
+            .into(tripImage)
     }
 
     override fun setTripDate(date: String) {

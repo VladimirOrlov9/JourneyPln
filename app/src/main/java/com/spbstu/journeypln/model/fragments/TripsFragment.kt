@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.navigation.Navigation
 import androidx.room.Room
+import com.bumptech.glide.Glide
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.spbstu.journeypln.R
@@ -18,10 +19,8 @@ import com.spbstu.journeypln.data.room.databases.TripsDb
 import com.spbstu.journeypln.model.activities.MainActivity
 import com.spbstu.journeypln.presenters.fragmentPresenters.TripsPresenter
 import com.spbstu.journeypln.views.TripsView
-import com.squareup.picasso.Picasso
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
-import java.io.File
 
 
 class TripsFragment : MvpAppCompatFragment(), TripsView {
@@ -112,7 +111,7 @@ class TripsFragment : MvpAppCompatFragment(), TripsView {
                                duration: String, description: String) {
         println(imageUri)
 
-        Picasso.with(requireContext())
+        Glide.with(requireContext())
                 .load(imageUri)
                 .into(lastTripImage)
         lastTripImage.contentDescription = name
@@ -129,7 +128,7 @@ class TripsFragment : MvpAppCompatFragment(), TripsView {
     override fun boundClosestTrip(name: String, imageUri: Uri, destination: String,
                                   duration: String, description: String) {
         if (closestTripImage.drawable == null) {
-            Picasso.with(requireContext())
+            Glide.with(requireContext())
                 .load(imageUri)
                 .into(closestTripImage)
         }
@@ -141,7 +140,7 @@ class TripsFragment : MvpAppCompatFragment(), TripsView {
     }
 
     override fun boundCurrentTrip(name: String, imageUri: Uri, destination: String, duration: String, description: String) {
-        Picasso.with(requireContext())
+        Glide.with(requireContext())
                 .load(imageUri)
                 .into(currentTripImage)
         currentTripImage.contentDescription = name

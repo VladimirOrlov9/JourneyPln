@@ -20,8 +20,21 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.graphics.Matrix
 import android.os.Build
 import java.io.*
+import android.media.ExifInterface
+
+import java.io.InputStream
+
+import java.io.IOException
+import android.graphics.BitmapFactory
+
+
+
+
+
+
 
 
 class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
@@ -187,7 +200,6 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
             val source = ImageDecoder.createSource(applicationContext.contentResolver, img)
             ImageDecoder.decodeBitmap(source)
         }
-
 
         val file = applicationContext.contentResolver.openOutputStream(imageUri)
         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, file)
