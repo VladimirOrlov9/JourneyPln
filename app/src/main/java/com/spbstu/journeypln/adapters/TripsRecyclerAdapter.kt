@@ -12,7 +12,6 @@ import com.spbstu.journeypln.data.room.entities.Trip
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
 
 class TripsRecyclerAdapter(
     context: Context,
@@ -30,14 +29,9 @@ class TripsRecyclerAdapter(
     inner class MyViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val tripImage: ImageView = view.findViewById(R.id.trip_image)
         val tripName: TextView = view.findViewById(R.id.trip_name)
-//        val tripDestination: TextView = view.findViewById(R.id.trip_destination)
         val tripDuration: TextView = view.findViewById(R.id.trip_duration)
         val tripInfo: TextView = view.findViewById(R.id.trip_info)
 
-    }
-
-    fun setData(newTripsList: List<Trip>) {
-        mTrips = newTripsList.toMutableList()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TripsRecyclerAdapter.MyViewHolder {
@@ -50,9 +44,6 @@ class TripsRecyclerAdapter(
         val currentTrip = mTrips[position]
 
         holder.tripName.text = currentTrip.name
-
-//            val destination = currentTrip.placeName
-//            holder.tripDestination.text = destination
 
         val duration = "${outputDateFormat.format(currentTrip.startDate)} - ${
             outputDateFormat.format(currentTrip.endDate)

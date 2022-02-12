@@ -12,13 +12,13 @@ interface TripsDao {
     fun insertTrip(trip: Trip): Long
 
     @Query("SELECT * FROM Trip WHERE endDate < :time ORDER BY endDate LIMIT 1")
-    fun findLast(time: Long): Trip
+    fun findLast(time: Long): Trip?
 
     @Query("SELECT * FROM Trip WHERE startDate > :time ORDER BY startDate LIMIT 1")
-    fun findClosest(time: Long): Trip
+    fun findClosest(time: Long): Trip?
 
     @Query("SELECT * FROM Trip WHERE startDate < :time AND :time < endDate ORDER BY startDate LIMIT 1")
-    fun findCurrent(time: Long): Trip
+    fun findCurrent(time: Long): Trip?
 
     @Query("SELECT * FROM Trip WHERE startDate > :time ORDER BY startDate")
     fun getClosestTrips(time: Long): List<Trip>
@@ -28,4 +28,7 @@ interface TripsDao {
 
     @Query("DELETE FROM Trip WHERE uid = :id")
     fun deleteTrip(id: Long)
+
+    @Query("SELECT * FROM Trip WHERE uid = :id LIMIT 1")
+    fun findTripById(id: Long): Trip?
 }

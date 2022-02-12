@@ -1,7 +1,6 @@
 package com.spbstu.journeypln.model.fragments
 
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,15 +9,18 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.navigation.Navigation
+import androidx.room.Room
+import com.bumptech.glide.Glide
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.spbstu.journeypln.R
+import com.spbstu.journeypln.data.room.databases.TripsDb
 import com.spbstu.journeypln.model.activities.MainActivity
 import com.spbstu.journeypln.presenters.fragmentPresenters.AboutTripPresenter
 import com.spbstu.journeypln.views.AboutTripView
-import com.squareup.picasso.Picasso
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
+import kotlin.properties.Delegates
 
 class AboutTripFragment : MvpAppCompatFragment(), AboutTripView {
 
@@ -32,20 +34,13 @@ class AboutTripFragment : MvpAppCompatFragment(), AboutTripView {
     private lateinit var durationFromTxt: TextView
     private lateinit var durationToTxt: TextView
     private lateinit var descriptionTxt: TextView
-    private lateinit var tempTxt: TextView
-
-    private lateinit var tempMinTxt: TextView
-    private lateinit var tempMaxTxt: TextView
-    private lateinit var sunriseTxt: TextView
-    private lateinit var sunsetTxt: TextView
-    private lateinit var humidityTxt: TextView
 
     private lateinit var clothesIndicator: LinearProgressIndicator
     private lateinit var clothesSum: TextView
     private lateinit var todoIndicator: LinearProgressIndicator
     private lateinit var todoSum: TextView
 
-    private lateinit var tripId: String
+    private var tripId by Delegates.notNull<Long>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,19 +60,26 @@ class AboutTripFragment : MvpAppCompatFragment(), AboutTripView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        presenter.getInfoAboutTripFromFirebase(tripId)
-        presenter.getPackingSummary(tripId)
-        presenter.getTodoSummary(tripId)
+        presenter.getInfoAboutTrip(tripId)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val bundle = arguments
-        val id = bundle?.getString("id")
+        val id = bundle?.getLong("id")
         if (id != null) {
             this.tripId = id
         }
+
+        val db = Room.databaseBuilder(
+            requireActivity().applicationContext,
+            TripsDb::class.java, "database"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+
+        presenter.initDb(db)
     }
 
     override fun onStart() {
@@ -94,12 +96,6 @@ class AboutTripFragment : MvpAppCompatFragment(), AboutTripView {
         durationToTxt = view.findViewById(R.id.trip_duration_to)
         descriptionTxt = view.findViewById(R.id.trip_description)
         nameTxt = view.findViewById(R.id.trip_name)
-        tempTxt = view.findViewById(R.id.temp_text)
-        tempMinTxt = view.findViewById(R.id.min_temp_txt)
-        tempMaxTxt = view.findViewById(R.id.max_temp_txt)
-        sunriseTxt = view.findViewById(R.id.sunrise_time_txt)
-        sunsetTxt = view.findViewById(R.id.sunset_time_txt)
-        humidityTxt = view.findViewById(R.id.humidity_txt)
 
         clothesIndicator = view.findViewById(R.id.clothes_indicator)
         clothesSum = view.findViewById(R.id.clothes_sum)
@@ -111,9 +107,9 @@ class AboutTripFragment : MvpAppCompatFragment(), AboutTripView {
         Toast.makeText(requireContext(), text, Toast.LENGTH_SHORT).show()
     }
 
-    override fun updateInfoAboutTrip(image: Uri, name: String, location: String, durationFrom: String,
+    override fun updateInfoAboutTrip(image: String, name: String, location: String, durationFrom: String,
                                      durationTo: String, description: String) {
-        Picasso.with(requireContext())
+        Glide.with(requireContext())
             .load(image)
             .into(imageImg)
 
@@ -124,25 +120,9 @@ class AboutTripFragment : MvpAppCompatFragment(), AboutTripView {
         descriptionTxt.text = description
     }
 
-    override fun updateTemp(
-        temp: String,
-        minTemp: String,
-        maxTemp: String,
-        sunrise: String,
-        sunset: String,
-        humidity: String
-    ) {
-        tempTxt.text = temp
-        tempMinTxt.text = minTemp
-        tempMaxTxt.text = maxTemp
-        sunsetTxt.text = sunset
-        sunriseTxt.text = sunrise
-        humidityTxt.text = humidity
-    }
-
-    override fun pressEditTripButton(key: String) {
+    override fun pressEditTripButton(key: Long) {
         val bundle = Bundle()
-        bundle.putString("key", key)
+        bundle.putLong("key", key)
         Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.editTripFragment, bundle)
     }
 
@@ -153,14 +133,25 @@ class AboutTripFragment : MvpAppCompatFragment(), AboutTripView {
             clothesIndicator.setIndicatorColor(requireActivity().getColor(R.color.st1))
         }
 
-        val progress = ((checked * 100) / sum).toInt()
+        val progress = when (sum) {
+            0 -> 0
+            else -> {
+                ((checked * 100) / sum).toInt()
+            }
+        }
+
         clothesIndicator.setProgressCompat(progress, true)
         val weightCheckedStr = String.format("%.1f", weightChecked)
         clothesSum.text = "$checked/$sum            $weightCheckedStr/$weightSum кг"
     }
 
     override fun updateProgressTodoChecked(checked: Int, sum: Int) {
-        val progress = ((checked * 100) / sum).toInt()
+        val progress = when (sum) {
+            0 -> 0
+            else -> {
+                ((checked * 100) / sum).toInt()
+            }
+        }
         todoIndicator.setProgressCompat(progress, true)
         todoSum.text = "$checked/$sum"
     }

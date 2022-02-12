@@ -11,13 +11,14 @@ import com.spbstu.journeypln.R
 import com.spbstu.journeypln.adapters.ThisTripPagerAdapter
 import com.spbstu.journeypln.model.activities.MainActivity
 import moxy.MvpAppCompatFragment
+import kotlin.properties.Delegates
 
 class ThisTripFragment : MvpAppCompatFragment() {
-    private lateinit var tripId: String
-
     private lateinit var thisTripPagerAdapter: ThisTripPagerAdapter
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
+
+    private var tripId by Delegates.notNull<Long>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -47,7 +48,7 @@ class ThisTripFragment : MvpAppCompatFragment() {
         super.onCreate(savedInstanceState)
 
         val bundle = arguments
-        val id = bundle?.getString("id")
+        val id = bundle?.getLong("id")
         if (id != null) {
             this.tripId = id
         }

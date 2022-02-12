@@ -32,22 +32,24 @@ class TripsPresenter: MvpPresenter<TripsView>() {
 
             val id = tripsDao.findLast(System.currentTimeMillis())
 
-            lastTripKey = id.uid
+            if (id != null) {
+                lastTripKey = id.uid
 
-            val startDate = outputDateFormat.format(id.startDate)
-            val endDate = outputDateFormat.format(id.endDate)
-            val duration = "$startDate - $endDate"
+                val startDate = outputDateFormat.format(id.startDate)
+                val endDate = outputDateFormat.format(id.endDate)
+                val duration = "$startDate - $endDate"
 
-            withContext(Dispatchers.Main) {
-                viewState.boundLastTrip(
-                    id.name,
-                    id.imageUri,
-                    id.placeName,
-                    duration,
-                    id.description
-                )
+                withContext(Dispatchers.Main) {
+                    viewState.boundLastTrip(
+                        id.name,
+                        id.imageUri,
+                        id.placeName,
+                        duration,
+                        id.description
+                    )
 
-                viewState.setLastTripVisibility(View.VISIBLE)
+                    viewState.setLastTripVisibility(View.VISIBLE)
+                }
             }
         }
     }
@@ -58,22 +60,24 @@ class TripsPresenter: MvpPresenter<TripsView>() {
             val tripsDao = db.tripsDao()
             val id = tripsDao.findClosest(System.currentTimeMillis())
 
-            closestTripKey = id.uid
+            if (id != null) {
+                closestTripKey = id.uid
 
-            val startDate = outputDateFormat.format(id.startDate)
-            val endDate = outputDateFormat.format(id.endDate)
-            val duration = "$startDate - $endDate"
+                val startDate = outputDateFormat.format(id.startDate)
+                val endDate = outputDateFormat.format(id.endDate)
+                val duration = "$startDate - $endDate"
 
-            launch(Dispatchers.Main) {
-                viewState.boundClosestTrip(
-                    id.name,
-                    Uri.parse(id.imageUri),
-                    id.placeName,
-                    duration,
-                    id.description
-                )
+                launch(Dispatchers.Main) {
+                    viewState.boundClosestTrip(
+                        id.name,
+                        Uri.parse(id.imageUri),
+                        id.placeName,
+                        duration,
+                        id.description
+                    )
 
-                viewState.setClosestTripVisibility(View.VISIBLE)
+                    viewState.setClosestTripVisibility(View.VISIBLE)
+                }
             }
         }
     }
@@ -97,22 +101,24 @@ class TripsPresenter: MvpPresenter<TripsView>() {
 
             val id = tripsDao.findCurrent(System.currentTimeMillis())
 
-            currentTripKey = id.uid
+            if (id != null) {
+                currentTripKey = id.uid
 
-            val startDate = outputDateFormat.format(id.startDate)
-            val endDate = outputDateFormat.format(id.endDate)
-            val duration = "$startDate - $endDate"
+                val startDate = outputDateFormat.format(id.startDate)
+                val endDate = outputDateFormat.format(id.endDate)
+                val duration = "$startDate - $endDate"
 
-            launch(Dispatchers.Main) {
-                viewState.boundCurrentTrip(
-                    id.name,
-                    Uri.parse(id.imageUri),
-                    id.placeName,
-                    duration,
-                    id.description
-                )
+                launch(Dispatchers.Main) {
+                    viewState.boundCurrentTrip(
+                        id.name,
+                        Uri.parse(id.imageUri),
+                        id.placeName,
+                        duration,
+                        id.description
+                    )
 
-                viewState.setCurrentTripVisibility(View.VISIBLE)
+                    viewState.setCurrentTripVisibility(View.VISIBLE)
+                }
             }
         }
     }

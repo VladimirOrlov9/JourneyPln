@@ -6,11 +6,11 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class Cloth (
-    @PrimaryKey(autoGenerate = true) val uid: Int,
+    @PrimaryKey(autoGenerate = true) val uid: Long = 0,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "isChecked") val isChecked: Boolean,
     @ColumnInfo(name = "weight") val weight: Double,
     @ColumnInfo(name = "count") val count: Int,
-    @ColumnInfo(name = "category") val category: Boolean,
-    @ColumnInfo(name = "tripId") val tripId: Int
+    @ColumnInfo(name = "categoryId") val categoryId: Long,
+    @ColumnInfo(name = "tripId") val tripId: Long
 )

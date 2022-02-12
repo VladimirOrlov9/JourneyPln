@@ -1,6 +1,5 @@
 package com.spbstu.journeypln.views
 
-import android.net.Uri
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.SkipStrategy
@@ -11,14 +10,11 @@ interface AboutTripView: MvpView {
     fun showToast(text: String)
 
     @StateStrategyType(value = AddToEndSingleStrategy::class)
-    fun updateInfoAboutTrip(image: Uri, name: String, location: String, durationFrom: String,
+    fun updateInfoAboutTrip(image: String, name: String, location: String, durationFrom: String,
                             durationTo: String, description: String)
 
-    @StateStrategyType(value = AddToEndSingleStrategy::class)
-    fun updateTemp(temp: String, minTemp: String, maxTemp: String, sunrise: String, sunset: String, humidity: String)
-
     @StateStrategyType(value = SkipStrategy::class)
-    fun pressEditTripButton(key: String)
+    fun pressEditTripButton(key: Long)
 
     @StateStrategyType(value = AddToEndSingleStrategy::class)
     fun updateProgressChecked(checked: Int, sum: Int, weightSum: Double, weightChecked: Double)

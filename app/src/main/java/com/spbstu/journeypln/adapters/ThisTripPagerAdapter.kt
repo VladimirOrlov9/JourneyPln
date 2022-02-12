@@ -5,12 +5,12 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.spbstu.journeypln.model.fragments.*
 
-class ThisTripPagerAdapter(fragment: Fragment, val id: String): FragmentStateAdapter(fragment) {
+class ThisTripPagerAdapter(fragment: Fragment, val id: Long): FragmentStateAdapter(fragment) {
     override fun getItemCount(): Int = PAGES_NUM
 
     override fun createFragment(position: Int): Fragment {
         val bundle = Bundle()
-        bundle.putString("id", id)
+        bundle.putLong("id", id)
 
         return when (position) {
             0 -> {
