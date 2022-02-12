@@ -19,4 +19,13 @@ interface TripsDao {
 
     @Query("SELECT * FROM Trip WHERE startDate < :time AND :time < endDate ORDER BY startDate LIMIT 1")
     fun findCurrent(time: Long): Trip
+
+    @Query("SELECT * FROM Trip WHERE startDate > :time ORDER BY startDate")
+    fun getClosestTrips(time: Long): List<Trip>
+
+    @Query("SELECT * FROM Trip WHERE endDate < :time ORDER BY endDate")
+    fun getLastTrips(time: Long): List<Trip>
+
+    @Query("DELETE FROM Trip WHERE uid = :id")
+    fun deleteTrip(id: Long)
 }

@@ -29,7 +29,6 @@ class TripsFragment : MvpAppCompatFragment(), TripsView {
     lateinit var presenter: TripsPresenter
 
     private lateinit var fabButton: ExtendedFloatingActionButton
-//    private lateinit var allTripsButton: Button
     private lateinit var noClosestTripText: TextView
     private lateinit var closestTripCardVIew: MaterialCardView
     private lateinit var closestTripImage: ImageView
@@ -64,10 +63,6 @@ class TripsFragment : MvpAppCompatFragment(), TripsView {
         fabButton.setOnClickListener {
             Navigation.findNavController(view).navigate(R.id.creationNewTripFragment)
         }
-
-//        allTripsButton.setOnClickListener {
-//            Navigation.findNavController(view).navigate(R.id.allTripsFragment)
-//        }
 
         closestTripCardVIew.setOnClickListener {
             presenter.openClosestTrip()
@@ -154,7 +149,6 @@ class TripsFragment : MvpAppCompatFragment(), TripsView {
     private fun init(view: View) {
         (activity as MainActivity).supportActionBar?.title = "Поездки"
         fabButton = view.findViewById(R.id.fab)
-//        allTripsButton = view.findViewById(R.id.all_trips_button)
         noClosestTripText = view.findViewById(R.id.no_closest_trip_text)
         closestTripCardVIew = view.findViewById(R.id.closest_trip_cardView)
 

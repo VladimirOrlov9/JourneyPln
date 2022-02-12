@@ -15,5 +15,5 @@ interface TripsListView: MvpView {
     @StateStrategyType(value = AddToEndSingleStrategy::class)
     fun showSnackBarDeletedItem(text: String)
     @StateStrategyType(value = SkipStrategy::class)
-    fun openClickedTrip(id: String)
+    fun openClickedTrip(id: Long)
 }

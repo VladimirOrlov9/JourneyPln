@@ -1,32 +1,22 @@
 package com.spbstu.journeypln.model.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.TextView
 import android.widget.Toast
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import com.spbstu.journeypln.R
 import com.spbstu.journeypln.adapters.TripsRecyclerAdapter
 import com.spbstu.journeypln.animations.SwipeToDeleteCallback
-import com.spbstu.journeypln.data.firebase.pojo.Trip
+import com.spbstu.journeypln.data.room.databases.TripsDb
 import com.spbstu.journeypln.presenters.fragmentPresenters.TripsListPresenter
 import com.spbstu.journeypln.views.TripsListView
-import com.spbstu.journeypln.views.TripsView
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 
@@ -48,7 +38,14 @@ class TripsListFragment: MvpAppCompatFragment(), TripsListView {
             this.position = pos
         }
 
-        presenter.setApplicationContext(requireContext(), position)
+        val db = Room.databaseBuilder(
+            requireActivity().applicationContext,
+            TripsDb::class.java, "database"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+
+        presenter.setApplicationContext(requireContext(), position, db)
     }
 
     override fun onCreateView(
@@ -95,9 +92,9 @@ class TripsListFragment: MvpAppCompatFragment(), TripsListView {
             .show()
     }
 
-    override fun openClickedTrip(id: String) {
+    override fun openClickedTrip(id: Long) {
         val bundle = Bundle()
-        bundle.putString("id", id)
+        bundle.putLong("id", id)
         Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.thisTripFragment, bundle)
     }
 

@@ -8,7 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.spbstu.journeypln.R
-import com.spbstu.journeypln.data.firebase.pojo.Trip
+import com.spbstu.journeypln.data.room.entities.Trip
 import com.squareup.picasso.Picasso
 import java.text.SimpleDateFormat
 import java.util.*
@@ -16,10 +16,10 @@ import kotlin.collections.ArrayList
 
 class TripsRecyclerAdapter(
     context: Context,
-    trips: ArrayList<Trip?>,
-    val onClickListener: (View, Trip?) -> Unit
+    trips: List<Trip>,
+    val onClickListener: (View, Trip) -> Unit
 ): RecyclerView.Adapter<TripsRecyclerAdapter.MyViewHolder>() {
-    private var mTrips: ArrayList<Trip?> = trips
+    private var mTrips: MutableList<Trip> = trips.toMutableList()
     private val mContext: Context = context
 
 
@@ -30,14 +30,14 @@ class TripsRecyclerAdapter(
     inner class MyViewHolder(view: View): RecyclerView.ViewHolder(view) {
         val tripImage: ImageView = view.findViewById(R.id.trip_image)
         val tripName: TextView = view.findViewById(R.id.trip_name)
-        val tripDestination: TextView = view.findViewById(R.id.trip_destination)
+//        val tripDestination: TextView = view.findViewById(R.id.trip_destination)
         val tripDuration: TextView = view.findViewById(R.id.trip_duration)
         val tripInfo: TextView = view.findViewById(R.id.trip_info)
 
     }
 
-    fun setData(newTripsList: ArrayList<Trip?>) {
-        mTrips = newTripsList
+    fun setData(newTripsList: List<Trip>) {
+        mTrips = newTripsList.toMutableList()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TripsRecyclerAdapter.MyViewHolder {
@@ -49,26 +49,24 @@ class TripsRecyclerAdapter(
     override fun onBindViewHolder(holder: TripsRecyclerAdapter.MyViewHolder, position: Int) {
         val currentTrip = mTrips[position]
 
-        if (currentTrip != null) {
-            holder.tripName.text = currentTrip.name
+        holder.tripName.text = currentTrip.name
 
-            val destination = currentTrip.placeName
-            holder.tripDestination.text = destination
+//            val destination = currentTrip.placeName
+//            holder.tripDestination.text = destination
 
-            val duration = "${outputDateFormat.format(currentTrip.startDate)} - ${
-                outputDateFormat.format(currentTrip.endDate)
-            }"
-            holder.tripDuration.text = duration
+        val duration = "${outputDateFormat.format(currentTrip.startDate)} - ${
+            outputDateFormat.format(currentTrip.endDate)
+        }"
+        holder.tripDuration.text = duration
 
-            holder.tripInfo.text = currentTrip.description
+        holder.tripInfo.text = currentTrip.description
 
-            Picasso.with(mContext)
-                .load(currentTrip.imageUri)
-                .fit()
-                .centerCrop()
-                .into(holder.tripImage)
-            holder.tripImage.clipToOutline = true
-        }
+        Picasso.with(mContext)
+            .load(currentTrip.imageUri)
+            .fit()
+            .centerCrop()
+            .into(holder.tripImage)
+        holder.tripImage.clipToOutline = true
 
         holder.itemView.setOnClickListener { view ->
             onClickListener.invoke(view, currentTrip)
@@ -84,11 +82,11 @@ class TripsRecyclerAdapter(
         notifyItemRemoved(position)
     }
 
-    fun restoreItem(trip: Trip?, position: Int) {
+    fun restoreItem(trip: Trip, position: Int) {
         mTrips.add(position, trip)
         notifyItemInserted(position)
     }
 
-    fun getData(): ArrayList<Trip?> = mTrips
+    fun getData(): List<Trip?> = mTrips
 
 }
