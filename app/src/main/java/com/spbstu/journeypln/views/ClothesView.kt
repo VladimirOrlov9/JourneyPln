@@ -8,7 +8,7 @@ import moxy.viewstate.strategy.StateStrategyType
 interface ClothesView: MvpView {
 
     @StateStrategyType(value = SingleStateStrategy::class)
-    fun updateCategories(list: ArrayList<String>)
+    fun updateCategories(list: List<String>)
 
     @StateStrategyType(value = SingleStateStrategy::class)
     fun setUpAdapter(adapter: ClothesRecyclerAdapter)
@@ -21,4 +21,7 @@ interface ClothesView: MvpView {
 
     @StateStrategyType(value = SingleStateStrategy::class)
     fun hideEditClothCard()
+
+    @StateStrategyType(value = SingleStateStrategy::class)
+    fun hideClothCard()
 }

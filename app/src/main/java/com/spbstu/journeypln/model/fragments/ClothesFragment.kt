@@ -11,15 +11,18 @@ import androidx.core.content.ContextCompat
 import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.textfield.TextInputLayout
 import com.spbstu.journeypln.R
 import com.spbstu.journeypln.adapters.ClothesRecyclerAdapter
 import com.spbstu.journeypln.adapters.TodoRecyclerAdapter
+import com.spbstu.journeypln.data.room.databases.TripsDb
 import com.spbstu.journeypln.presenters.fragmentPresenters.ClothesPresenter
 import com.spbstu.journeypln.views.ClothesView
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
+import kotlin.properties.Delegates
 
 class ClothesFragment : MvpAppCompatFragment(), ClothesView {
 
@@ -51,19 +54,27 @@ class ClothesFragment : MvpAppCompatFragment(), ClothesView {
 
     private lateinit var deleteCategoryBtn: ImageButton
 
-    private lateinit var tripId: String
+    private var tripId by Delegates.notNull<Long>()
     private val ar = Array(50) { String.format("%.1f", (it * 0.1)).replace(",", ".") }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val bundle = arguments
-        val id = bundle?.getString("id")
+        val id = bundle?.getLong("id")
         if (id != null) {
             this.tripId = id
             presenter.setTripId(this.tripId)
         }
-        presenter.setApplicationContext(requireContext())
+
+        val db = Room.databaseBuilder(
+            requireActivity().applicationContext,
+            TripsDb::class.java, "database"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+
+        presenter.setApplicationContext(requireContext(), db)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -178,7 +189,7 @@ class ClothesFragment : MvpAppCompatFragment(), ClothesView {
         categoryFAB.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_baseline_add_24)
     }
 
-    private fun hideClothCard() {
+    override fun hideClothCard() {
         clothCardView.visibility = View.GONE
         clothFAB.icon = ContextCompat.getDrawable(requireActivity(), R.drawable.ic_baseline_add_24)
     }
@@ -253,7 +264,7 @@ class ClothesFragment : MvpAppCompatFragment(), ClothesView {
         deleteCategoryBtn = view.findViewById(R.id.delete_category)
     }
 
-    override fun updateCategories(list: ArrayList<String>) {
+    override fun updateCategories(list: List<String>) {
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, list)
         (newClothCategoryPick.editText as? AutoCompleteTextView)?.setAdapter(adapter)
         (globalCategoryPick.editText as? AutoCompleteTextView)?.setAdapter(adapter)

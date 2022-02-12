@@ -1,6 +1,5 @@
 package com.spbstu.journeypln.adapters
 
-import android.content.Context
 import android.view.ContextMenu
 import android.view.LayoutInflater
 import android.view.View
@@ -10,15 +9,15 @@ import android.widget.ImageButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.spbstu.journeypln.R
-import com.spbstu.journeypln.data.firebase.pojo.Cloth
+import com.spbstu.journeypln.data.room.entities.Cloth
 
 class ClothesRecyclerAdapter(
-        tasks: ArrayList<Cloth>,
-        private val onClickListener: (View, Cloth) -> Unit,
-        private val onClickMoreButtonListener: (View, Cloth) -> Unit
+    tasks: List<Cloth>,
+    private val onClickListener: (View, Cloth) -> Unit,
+    private val onClickMoreButtonListener: (View, Cloth) -> Unit
 ): RecyclerView.Adapter<ClothesRecyclerAdapter.MyViewHolder>(), View.OnCreateContextMenuListener {
 
-    private var mClothes: ArrayList<Cloth> = tasks
+    private var mClothes: MutableList<Cloth> = tasks.toMutableList()
 
 
     inner class MyViewHolder(view: View): RecyclerView.ViewHolder(view) {
@@ -28,8 +27,8 @@ class ClothesRecyclerAdapter(
         val countTextView: TextView = view.findViewById(R.id.cloth_count)
     }
 
-    fun setData(newTasksList: ArrayList<Cloth>) {
-        mClothes = newTasksList
+    fun setData(newTasksList: List<Cloth>) {
+        mClothes = newTasksList.toMutableList()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ClothesRecyclerAdapter.MyViewHolder {
@@ -59,18 +58,6 @@ class ClothesRecyclerAdapter(
     override fun getItemCount(): Int {
         return mClothes.size
     }
-
-    fun removeItem(position: Int) {
-        mClothes.removeAt(position)
-        notifyItemRemoved(position)
-    }
-
-    fun restoreItem(task: Cloth, position: Int) {
-        mClothes.add(position, task)
-        notifyItemInserted(position)
-    }
-
-    fun getData(): ArrayList<Cloth> = mClothes
 
     override fun onCreateContextMenu(menu: ContextMenu?, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
 
