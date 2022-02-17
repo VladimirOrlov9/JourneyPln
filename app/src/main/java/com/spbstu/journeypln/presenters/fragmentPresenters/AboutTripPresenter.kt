@@ -64,6 +64,8 @@ class AboutTripPresenter: MvpPresenter<AboutTripView>() {
             val absoluteWeight = currentTrip!!.weight
             val takenWeight = clothesDao.countTakenWeight(id)
 
+            println(takenWeight)
+
             launch(Dispatchers.Main) {
                 viewState.updateProgressChecked(
                     checked = checkedNumberOfClothes,

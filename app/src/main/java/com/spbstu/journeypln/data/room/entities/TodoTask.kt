@@ -6,9 +6,9 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class TodoTask (
-    @PrimaryKey(autoGenerate = true) val uid: Int,
+    @PrimaryKey(autoGenerate = true) val uid: Long = 0,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "isChecked") val isChecked: Boolean,
     @ColumnInfo(name = "time") val time: Long,
-    @ColumnInfo(name = "tripId") val tripId: Int
+    @ColumnInfo(name = "tripId") val tripId: Long
 )

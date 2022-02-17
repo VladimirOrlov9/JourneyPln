@@ -9,16 +9,16 @@ import android.widget.CompoundButton
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.spbstu.journeypln.R
-import com.spbstu.journeypln.data.firebase.pojo.TodoTask
+import com.spbstu.journeypln.data.room.entities.TodoTask
+//import com.spbstu.journeypln.data.firebase.pojo.TodoTask
 import kotlin.collections.ArrayList
 
 class TodoRecyclerAdapter(
-    context: Context,
-    tasks: ArrayList<TodoTask>,
+    tasks: List<TodoTask>,
     private val onClickListener: (View, TodoTask) -> Unit
 ): RecyclerView.Adapter<TodoRecyclerAdapter.MyViewHolder>() {
 
-    private var mTasks: ArrayList<TodoTask> = tasks
+    private var mTasks: MutableList<TodoTask> = tasks.toMutableList()
 
 
     inner class MyViewHolder(view: View): RecyclerView.ViewHolder(view) {
@@ -26,8 +26,8 @@ class TodoRecyclerAdapter(
 
     }
 
-    fun setData(newTasksList: ArrayList<TodoTask>) {
-        mTasks = newTasksList
+    fun setData(newTasksList: List<TodoTask>) {
+        mTasks = newTasksList.toMutableList()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TodoRecyclerAdapter.MyViewHolder {
@@ -61,6 +61,6 @@ class TodoRecyclerAdapter(
         notifyItemInserted(position)
     }
 
-    fun getData(): ArrayList<TodoTask> = mTasks
+    fun getData(): List<TodoTask> = mTasks
 
 }

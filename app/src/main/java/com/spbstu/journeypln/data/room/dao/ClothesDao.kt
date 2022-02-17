@@ -21,7 +21,7 @@ interface ClothesDao {
     @Query("SELECT COUNT(*) FROM Cloth WHERE :id = tripId AND isChecked = 1")
     fun countCheckedClothes(id: Long): Int
 
-    @Query("SELECT AVG(weight) FROM Cloth WHERE :id = tripId AND isChecked = 1")
+    @Query("SELECT SUM(weight * count) FROM Cloth WHERE :id = tripId AND isChecked = 1")
     fun countTakenWeight(id: Long): Double
 
     @Query("SELECT COUNT(*) FROM Cloth WHERE :id = tripId AND name = :name AND weight = :weight")

@@ -10,93 +10,97 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.spbstu.journeypln.adapters.TodoRecyclerAdapter
-import com.spbstu.journeypln.data.firebase.pojo.TodoTask
+import com.spbstu.journeypln.data.room.databases.TripsDb
+import com.spbstu.journeypln.data.room.entities.TodoTask
+//import com.spbstu.journeypln.data.firebase.pojo.TodoTask
 import com.spbstu.journeypln.views.ToDoListView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import moxy.MvpPresenter
+import kotlin.properties.Delegates
 
 class ToDoListPresenter: MvpPresenter<ToDoListView>() {
 
-    private val database = Firebase.database
-    private val signInAccount = FirebaseAuth.getInstance()
+//    private val database = Firebase.database
+//    private val signInAccount = FirebaseAuth.getInstance()
     private lateinit var context: Context
 
     private lateinit var mTasksAdapter: TodoRecyclerAdapter
 
-    private lateinit var tripId: String
-    private var tasksList: ArrayList<TodoTask> = arrayListOf()
+    private var tripId: Long = 0
+    private var tasksList: List<TodoTask> = listOf()
+    private lateinit var db: TripsDb
 
-    fun setTripId(tripId: String) {
+    fun setTripId(tripId: Long) {
         this.tripId = tripId
     }
 
-    fun setContext(context: Context) {
+    fun setContext(context: Context, db: TripsDb) {
         this.context = context
+        this.db = db
     }
 
     fun loadAllTasks() {
-        val databaseReference = database.getReference("users/${signInAccount.uid}/$tripId/tasks")
 
-        databaseReference.orderByChild("time").addValueEventListener(
-                object : ValueEventListener {
-                    override fun onDataChange(snapshot: DataSnapshot) {
-                        val newList = arrayListOf<TodoTask>()
-                        tasksList.clear()
-                        if (snapshot.exists()) {
-                            val uploadList = snapshot.children.sortedByDescending { it.child("time")
-                                    .getValue(Long::class.java) }.toList()
+        CoroutineScope(Dispatchers.IO).launch {
+            val todoDao = db.todoDao()
+            val tasks = todoDao.getAllTasks(tripId)
 
-                            if (uploadList.isNotEmpty()) {
-                                for (element in uploadList) {
-                                    val upload = element.getValue(TodoTask::class.java)
-                                    if (upload != null) {
-                                        upload.setKey(element.key.toString())
-                                        newList.add(upload)
-                                    }
-                                }
+            tasksList = if (tasks.isNotEmpty()) tasks else listOf()
+            mTasksAdapter.setData(tasksList)
 
-                                tasksList = newList
-                                mTasksAdapter.setData(tasksList)
-                                mTasksAdapter.notifyDataSetChanged()
-                            }
-                        } else {
-                            tasksList.clear()
-                            mTasksAdapter.setData(tasksList)
-                            mTasksAdapter.notifyDataSetChanged()
-                        }
-                    }
-
-                    override fun onCancelled(error: DatabaseError) {
-                        viewState.showToast(error.message)
-                    }
-                }
-        )
+            launch(Dispatchers.Main) {
+                mTasksAdapter.notifyDataSetChanged()
+            }
+        }
     }
 
     fun setAdapter() {
-        val databaseReference = database.getReference("users/${signInAccount.uid}/$tripId/tasks")
 
-        mTasksAdapter = TodoRecyclerAdapter(context = context, tasks = tasksList,
+        mTasksAdapter = TodoRecyclerAdapter(tasks = tasksList,
                 onClickListener = { compoundButton, todoTask ->
                     val b = (compoundButton as CheckBox).isChecked
-                    databaseReference.child(todoTask.getKey()).updateChildren(mapOf("isChecked" to b))
+                    CoroutineScope(Dispatchers.IO).launch {
+                        val todoDao = db.todoDao()
+                        todoDao.updateCheckStatus(todoTask.uid, b)
+                    }
                 })
         viewState.setUpAdapter(mTasksAdapter)
     }
 
     fun addNewTask(taskText: String) {
+
         if (taskText.isNotBlank()) {
-            val databaseReference = database.getReference("users/${signInAccount.uid}/$tripId/tasks")
-            val task = TodoTask(name = taskText, isChecked = false, time = System.currentTimeMillis())
-            databaseReference.push().setValue(task)
-            viewState.hideInputErrorAndClear()
-        } else {
+            CoroutineScope(Dispatchers.IO).launch {
+                val todoDao = db.todoDao()
+                todoDao.insertTask(
+                    TodoTask(
+                        name = taskText,
+                        isChecked = false,
+                        time = System.currentTimeMillis(),
+                        tripId = tripId
+                    )
+                )
+
+                launch(Dispatchers.Main) {
+                    viewState.hideInputErrorAndClear()
+                }
+            }
+        }
+        else {
             viewState.showInputError()
         }
     }
 
     fun deleteElement(position: Int) {
-        val databaseReference = database.getReference("users/${signInAccount.uid}/$tripId/tasks")
-        val key = tasksList[position].getKey()
-        databaseReference.child(key).removeValue()
+        CoroutineScope(Dispatchers.IO).launch {
+            val todoDao = db.todoDao()
+            todoDao.deleteTask(tasksList[position].uid)
+
+            launch(Dispatchers.Main) {
+                viewState.hideInputErrorAndClear()
+            }
+        }
     }
 }

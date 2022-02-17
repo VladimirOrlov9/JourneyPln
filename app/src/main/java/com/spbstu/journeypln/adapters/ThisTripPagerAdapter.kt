@@ -23,11 +23,11 @@ class ThisTripPagerAdapter(fragment: Fragment, val id: Long): FragmentStateAdapt
                 fragment.arguments = bundle
                 fragment
             }
-//            2 -> {
-//                val fragment = ToDoListFragment()
-//                fragment.arguments = bundle
-//                fragment
-//            }
+            2 -> {
+                val fragment = ToDoListFragment()
+                fragment.arguments = bundle
+                fragment
+            }
             else -> {
                 val fragment = AboutTripFragment()
                 fragment.arguments = bundle

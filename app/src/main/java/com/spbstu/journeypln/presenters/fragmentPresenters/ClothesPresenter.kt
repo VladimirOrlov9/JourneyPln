@@ -105,8 +105,6 @@ class ClothesPresenter: MvpPresenter<ClothesView>() {
     }
 
     fun setAdapter() {
-//        val databaseReference = database.getReference("users/${signInAccount.uid}/$tripId/clothes")
-
         mClothesAdapter = ClothesRecyclerAdapter(tasks = clothesList,
             onClickListener = { compoundButton, cloth ->
                 val b = (compoundButton as CheckBox).isChecked

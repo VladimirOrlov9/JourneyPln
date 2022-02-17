@@ -11,15 +11,18 @@ import androidx.core.widget.doAfterTextChanged
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.google.android.material.textfield.TextInputLayout
 import com.google.android.material.textfield.TextInputLayout.END_ICON_CUSTOM
 import com.spbstu.journeypln.R
 import com.spbstu.journeypln.adapters.TodoRecyclerAdapter
 import com.spbstu.journeypln.animations.SwipeToDeleteCallback
+import com.spbstu.journeypln.data.room.databases.TripsDb
 import com.spbstu.journeypln.presenters.fragmentPresenters.ToDoListPresenter
 import com.spbstu.journeypln.views.ToDoListView
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
+import kotlin.properties.Delegates
 
 class ToDoListFragment : MvpAppCompatFragment(), ToDoListView {
 
@@ -29,7 +32,7 @@ class ToDoListFragment : MvpAppCompatFragment(), ToDoListView {
     private lateinit var newTaskName: TextInputLayout
     private lateinit var mRecyclerView: RecyclerView
 
-    private lateinit var tripId: String
+    private var tripId by Delegates.notNull<Long>()
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -59,13 +62,20 @@ class ToDoListFragment : MvpAppCompatFragment(), ToDoListView {
         super.onCreate(savedInstanceState)
 
         val bundle = arguments
-        val id = bundle?.getString("id")
+        val id = bundle?.getLong("id")
         if (id != null) {
             this.tripId = id
             presenter.setTripId(tripId)
         }
 
-        presenter.setContext(requireContext())
+        val db = Room.databaseBuilder(
+            requireActivity().applicationContext,
+            TripsDb::class.java, "database"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+
+        presenter.setContext(requireContext(), db)
     }
 
     private fun init(view: View) {
