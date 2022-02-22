@@ -2,21 +2,24 @@ package com.spbstu.journeypln.model.fragments
 
 import android.app.Activity
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.navigation.Navigation
+import androidx.room.Room
+import com.bumptech.glide.Glide
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
 import com.google.android.material.progressindicator.LinearProgressIndicator
 import com.spbstu.journeypln.R
+import com.spbstu.journeypln.data.room.databases.TripsDb
 import com.spbstu.journeypln.model.activities.MainActivity
 import com.spbstu.journeypln.presenters.fragmentPresenters.EditTripPresenter
 import com.spbstu.journeypln.views.EditTripView
-import com.squareup.picasso.Picasso
 import moxy.MvpAppCompatFragment
 import moxy.presenter.InjectPresenter
 import java.io.FileNotFoundException
@@ -41,17 +44,63 @@ class EditTripFragment: MvpAppCompatFragment(), EditTripView {
     private lateinit var indicatorLine: LinearProgressIndicator
     private lateinit var weightTxt: EditText
 
-    private lateinit var tripKey: String
+    private lateinit var someActivityResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var galleryResultLauncher: ActivityResultLauncher<Intent>
+
+    private var tripId: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val keyStr = arguments?.getString("key")
+        val keyStr = arguments?.getLong("key")
         if (keyStr != null) {
-            tripKey = keyStr
+            tripId = keyStr
         }
         (activity as MainActivity).supportActionBar?.title = "Изменить поездку"
-        presenter.setContext(requireContext())
+
+        val db = Room.databaseBuilder(
+            requireActivity().applicationContext,
+            TripsDb::class.java, "database"
+        )
+            .fallbackToDestructiveMigration()
+            .build()
+
+        presenter.setContext(requireContext(), db)
+
+        someActivityResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+
+            if (result.resultCode == Activity.RESULT_OK) {
+                let {
+                    presenter.drawImageByUri()
+                }
+            }
+        }
+
+        galleryResultLauncher = registerForActivityResult(
+            ActivityResultContracts.StartActivityForResult()
+        ) { result ->
+
+            if (result.resultCode == Activity.RESULT_OK) {
+
+                val data: Intent? = result.data
+                let {
+                    try {
+                        val selectedImage = data?.data
+                        if (selectedImage != null) {
+                            presenter.drawImageFromGalleryByUri(selectedImage)
+                        }
+                    } catch (ex: FileNotFoundException) {
+                        Toast.makeText(
+                            requireContext(),
+                            "You haven't picked Image",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+        }
     }
 
     override fun onCreateView(
@@ -105,50 +154,7 @@ class EditTripFragment: MvpAppCompatFragment(), EditTripView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        presenter.getInfoAboutTripFromFirebase(tripKey)
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode != Activity.RESULT_CANCELED) {
-            when (requestCode) {
-                NEW_IMAGE_CAMERA -> {
-                    if (resultCode == Activity.RESULT_OK) {
-                        presenter.drawImageByUri()
-                    }
-                }
-                NEW_IMAGE_GALLERY -> {
-                    if (resultCode == Activity.RESULT_OK && data != null) {
-                        try {
-                            val selectedImage = data.data
-                            if (selectedImage != null) {
-                                presenter.drawImageFromGalleryByUri(selectedImage)
-                            }
-                        } catch (ex: FileNotFoundException) {
-                            Toast.makeText(
-                                requireContext(),
-                                "You haven't picked Image",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                }
-                NEW_DESTINATION -> {
-                    if (resultCode == Activity.RESULT_OK && data != null) {
-//                        data.let {
-//                            val place = Autocomplete.getPlaceFromIntent(data)
-//                            if (place.id != null && place.address != null && place.latLng != null) {
-//                                presenter.setDestinationInfo(
-//                                    place.id!!,
-//                                    place.address!!,
-//                                    place.latLng!!
-//                                )
-//                            }
-//                        }
-                    }
-                }
-            }
-        }
+        presenter.getInfoAboutTrip(tripId)
     }
 
     private fun setupDatePicker() {
@@ -192,8 +198,8 @@ class EditTripFragment: MvpAppCompatFragment(), EditTripView {
         weightTxt = view.findViewById(R.id.trip_weight_editText)
     }
 
-    override fun updatePhoto(uri: Uri) {
-        Picasso.with(requireContext())
+    override fun updatePhoto(uri: String) {
+        Glide.with(requireContext())
             .load(uri)
             .into(imageView)
     }
@@ -218,7 +224,7 @@ class EditTripFragment: MvpAppCompatFragment(), EditTripView {
         indicatorLine.setProgressCompat(progress, true)
     }
 
-    override fun updateInfoAboutTrip(image: Uri, name: String, location: String,
+    override fun updateInfoAboutTrip(image: String, name: String, location: String,
                                      duration: String, description: String, weight: Double) {
         updatePhoto(image)
         nameTripTxt.setText(name)
@@ -233,16 +239,10 @@ class EditTripFragment: MvpAppCompatFragment(), EditTripView {
     }
 
     override fun startTakePictureIntent(intent: Intent) {
-        requireActivity().startActivityForResult(intent, NEW_IMAGE_CAMERA)
+        someActivityResultLauncher.launch(intent)
     }
 
     override fun startTakePictureFromGalleryIntent(intent: Intent) {
-        requireActivity().startActivityForResult(intent, NEW_IMAGE_GALLERY)
-    }
-
-    companion object {
-        const val NEW_DESTINATION = 132
-        const val NEW_IMAGE_CAMERA = 142
-        const val NEW_IMAGE_GALLERY = 152
+        galleryResultLauncher.launch(intent)
     }
 }

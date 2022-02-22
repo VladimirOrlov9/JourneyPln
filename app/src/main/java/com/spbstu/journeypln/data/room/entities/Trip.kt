@@ -7,14 +7,14 @@ import androidx.room.PrimaryKey
 @Entity
 data class Trip (
     @PrimaryKey(autoGenerate = true) val uid: Long = 0,
-    @ColumnInfo(name = "name") val name: String,
+    @ColumnInfo(name = "name") var name: String,
 //    @ColumnInfo(name = "placeId") val placeId: String,
-    @ColumnInfo(name = "placeName") val placeName: String,
+    @ColumnInfo(name = "placeName") var placeName: String,
 //    @ColumnInfo(name = "placeLat") val placeLat: Double,
 //    @ColumnInfo(name = "placeLong") val placeLong: Double,
-    @ColumnInfo(name = "startDate") val startDate: Long?,
-    @ColumnInfo(name = "endDate") val endDate: Long?,
-    @ColumnInfo(name = "description") val description: String,
-    @ColumnInfo(name = "imageUri") val imageUri: String,
-    @ColumnInfo(name = "weight") val weight: Double
+    @ColumnInfo(name = "startDate") var startDate: Long,
+    @ColumnInfo(name = "endDate") var endDate: Long,
+    @ColumnInfo(name = "description") var description: String,
+    @ColumnInfo(name = "imageUri") var imageUri: String,
+    @ColumnInfo(name = "weight") var weight: Double
 )

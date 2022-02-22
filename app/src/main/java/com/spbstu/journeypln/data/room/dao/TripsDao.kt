@@ -31,4 +31,10 @@ interface TripsDao {
 
     @Query("SELECT * FROM Trip WHERE uid = :id LIMIT 1")
     fun findTripById(id: Long): Trip?
+
+    @Query("""UPDATE Trip SET name = :name, description = :description, 
+                    weight = :weight, startDate = :startDate, endDate = :endDate,
+                    imageUri = :imageUri, placeName = :placeName WHERE uid = :uid""")
+    fun updateTrip(uid: Long, name: String, description: String, weight: Double,
+                   startDate: Long, endDate: Long, imageUri: String, placeName: String)
 }

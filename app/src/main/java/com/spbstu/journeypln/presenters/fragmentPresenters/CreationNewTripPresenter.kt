@@ -20,29 +20,16 @@ import java.text.SimpleDateFormat
 import java.util.*
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
-import android.graphics.Matrix
 import android.os.Build
 import java.io.*
-import android.media.ExifInterface
-
-import java.io.InputStream
-
 import java.io.IOException
-import android.graphics.BitmapFactory
-
-
-
-
-
-
-
 
 class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
 
     private lateinit var applicationContext: Context
 
-    private var startDate: Long? = System.currentTimeMillis()
-    private var endDate: Long? = System.currentTimeMillis()
+    private var startDate: Long = System.currentTimeMillis()
+    private var endDate: Long = System.currentTimeMillis()
     private lateinit var fileName: String
     private lateinit var imageUri: Uri
 
@@ -149,37 +136,35 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
         val endDate = endDate
 
         try {
+            CoroutineScope(Dispatchers.IO).launch {
+                val tripsDao = db.tripsDao()
+                val categoriesDao = db.categoriesDao()
 
-               GlobalScope.launch {
-                   launch(Dispatchers.IO) {
-                       val tripsDao = db.tripsDao()
-                       val categoriesDao = db.categoriesDao()
+                val newTrip = Trip(
+                    name = name,
+                    startDate = startDate,
+                    endDate = endDate,
+                    description = description,
+                    imageUri = imageUri.toString(),
+                    weight = weight,
+                    placeName = destination
+                )
 
-                       val newTrip = Trip(
-                           name = name,
-                           startDate = startDate,
-                           endDate = endDate,
-                           description = description,
-                           imageUri = imageUri.toString(),
-                           weight = weight,
-                           placeName = destination
-                       )
+                val id: Long = tripsDao.insertTrip(trip = newTrip)
 
-                       val id: Long = tripsDao.insertTrip(trip = newTrip)
+                for (category in defCategoriesList) {
+                    categoriesDao.insertCategory(
+                        Category(
+                            name = category,
+                            tripId = id
+                        )
+                    )
+                }
 
-                       for (category in defCategoriesList) {
-                           categoriesDao.insertCategory(
-                               Category(
-                                   name = category,
-                                   tripId = id
-                               )
-                           )
-                       }
-                   }
-                   launch(Dispatchers.Main) {
-                       viewState.getBackByNavController()
-                   }
-               }
+                launch(Dispatchers.Main) {
+                    viewState.getBackByNavController()
+                }
+            }
         }
         catch (ex: Exception) {
             viewState.showToast(ex.message.toString())

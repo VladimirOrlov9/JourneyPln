@@ -1,7 +1,6 @@
 package com.spbstu.journeypln.views
 
 import android.content.Intent
-import android.net.Uri
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
 import moxy.viewstate.strategy.StateStrategyType
@@ -9,7 +8,7 @@ import moxy.viewstate.strategy.StateStrategyType
 interface EditTripView: MvpView {
 
     @StateStrategyType(value = AddToEndSingleStrategy::class)
-    fun updateInfoAboutTrip(image: Uri, name: String, location: String,
+    fun updateInfoAboutTrip(image: String, name: String, location: String,
                             duration: String, description: String, weight: Double)
 
     @StateStrategyType(value = AddToEndSingleStrategy::class)
@@ -22,7 +21,7 @@ interface EditTripView: MvpView {
     fun startTakePictureFromGalleryIntent(intent: Intent)
 
     @StateStrategyType(value = AddToEndSingleStrategy::class)
-    fun updatePhoto(uri: Uri)
+    fun updatePhoto(uri: String)
 
     @StateStrategyType(value = AddToEndSingleStrategy::class)
     fun updateDate(date: String)
