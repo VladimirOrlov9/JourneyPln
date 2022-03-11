@@ -132,34 +132,9 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
             imageUri = getUriToDrawable(applicationContext, R.drawable.unnamed)
         }
 
-        val startDate = startDate
-        val endDate = endDate
-
         try {
             CoroutineScope(Dispatchers.IO).launch {
-                val tripsDao = db.tripsDao()
-                val categoriesDao = db.categoriesDao()
-
-                val newTrip = Trip(
-                    name = name,
-                    startDate = startDate,
-                    endDate = endDate,
-                    description = description,
-                    imageUri = imageUri.toString(),
-                    weight = weight,
-                    placeName = destination
-                )
-
-                val id: Long = tripsDao.insertTrip(trip = newTrip)
-
-                for (category in defCategoriesList) {
-                    categoriesDao.insertCategory(
-                        Category(
-                            name = category,
-                            tripId = id
-                        )
-                    )
-                }
+                addNewTripToDB(name, description, weight, destination)
 
                 launch(Dispatchers.Main) {
                     viewState.getBackByNavController()
@@ -168,6 +143,35 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
         }
         catch (ex: Exception) {
             viewState.showToast(ex.message.toString())
+        }
+    }
+
+    private fun addNewTripToDB(name: String, description: String, weight: Double, destination: String) {
+        val startDate = startDate
+        val endDate = endDate
+
+        val tripsDao = db.tripsDao()
+        val categoriesDao = db.categoriesDao()
+
+        val newTrip = Trip(
+            name = name,
+            startDate = startDate,
+            endDate = endDate,
+            description = description,
+            imageUri = imageUri.toString(),
+            weight = weight,
+            placeName = destination
+        )
+
+        val id: Long = tripsDao.insertTrip(trip = newTrip)
+
+        for (category in defCategoriesList) {
+            categoriesDao.insertCategory(
+                Category(
+                    name = category,
+                    tripId = id
+                )
+            )
         }
     }
 

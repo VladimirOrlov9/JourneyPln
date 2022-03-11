@@ -1,6 +1,7 @@
 package com.spbstu.journeypln.presenters.fragmentPresenters
 
 import android.content.Context
+import android.view.MenuItem
 import android.widget.CheckBox
 import android.widget.PopupMenu
 import com.spbstu.journeypln.R
@@ -53,33 +54,33 @@ class ClothesPresenter: MvpPresenter<ClothesView>() {
     fun addNewCloth(clothName: String, category: String, weight: String, count: Int) {
 
         CoroutineScope(Dispatchers.IO).launch {
-            val categoriesDao = db.categoriesDao()
-            val categoryId = categoriesDao.getIdByName(category, tripId)
+            addNewClothToDB(clothName, category, weight, count)
 
-            val clothesDao = db.clothesDao()
-            val clothExist = clothesDao.ifClothWithSuchNameExist(tripId, clothName, weight.toDouble())
+            launch(Dispatchers.Main) {
+                updateRecyclerByCategory(category)
+                viewState.hideClothCard()
+            }
+        }
+    }
 
-            if (clothExist == 0) {
-                clothesDao.insertCloth(
-                    Cloth(
-                        name = clothName, isChecked = false, weight = weight.toDouble(),
-                        count = count, categoryId = categoryId, tripId = tripId
-                    )
+    private fun addNewClothToDB(clothName: String, category: String, weight: String, count: Int) {
+        val categoriesDao = db.categoriesDao()
+        val categoryId = categoriesDao.getIdByName(category, tripId)
+
+        val clothesDao = db.clothesDao()
+        val clothExist = clothesDao.ifClothWithSuchNameExist(tripId, clothName, weight.toDouble())
+
+        if (clothExist == 0) {
+            clothesDao.insertCloth(
+                Cloth(
+                    name = clothName, isChecked = false, weight = weight.toDouble(),
+                    count = count, categoryId = categoryId, tripId = tripId
                 )
-                launch(Dispatchers.Main) {
-                    updateRecyclerByCategory(category)
-                    viewState.hideClothCard()
-                }
-            }
-            else {
-                clothesDao.incrementCounter(clothName, count, tripId)
-                viewState.showToast("Field \"$clothName\" was incremented by $count.")
-
-                launch(Dispatchers.Main) {
-                    updateRecyclerByCategory(category)
-                    viewState.hideClothCard()
-                }
-            }
+            )
+        }
+        else {
+            clothesDao.incrementCounter(clothName, count, tripId)
+            viewState.showToast("Field \"$clothName\" was incremented by $count.")
         }
     }
 
@@ -118,65 +119,72 @@ class ClothesPresenter: MvpPresenter<ClothesView>() {
                 val popupMenu = PopupMenu(view.context, view)
                 popupMenu.inflate(R.menu.cloth_menu)
                 popupMenu.setOnMenuItemClickListener {
-                    when (it.itemId) {
-                        R.id.action_cloth_edit -> {
-                            inEditionClothId = cloth.uid
-
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val categoriesDao = db.categoriesDao()
-                                val categoryName = categoriesDao.getNameById(cloth.categoryId)
-
-                                launch(Dispatchers.Main) {
-                                    viewState.showEditClothCard(
-                                        name = cloth.name, category = categoryName,
-                                        count = cloth.count, weight = cloth.weight
-                                    )
-                                }
-                            }
-                            return@setOnMenuItemClickListener true
-                        }
-                        R.id.action_cloth_delete -> {
-
-                            CoroutineScope(Dispatchers.IO).launch {
-                                val clothesDao = db.clothesDao()
-                                clothesDao.deleteCloth(cloth)
-                            }
-                            return@setOnMenuItemClickListener true
-                        }
-                        else ->
-                            return@setOnMenuItemClickListener false
-                    }
+                    menuActionsSetup(it, cloth)
                 }
                 popupMenu.show()
             })
         viewState.setUpAdapter(mClothesAdapter)
+    }
+    private fun menuActionsSetup(item: MenuItem, cloth: Cloth): Boolean {
+        when (item.itemId) {
+            R.id.action_cloth_edit -> {
+                inEditionClothId = cloth.uid
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    val categoriesDao = db.categoriesDao()
+                    val categoryName = categoriesDao.getNameById(cloth.categoryId)
+
+                    launch(Dispatchers.Main) {
+                        viewState.showEditClothCard(
+                            name = cloth.name, category = categoryName,
+                            count = cloth.count, weight = cloth.weight
+                        )
+                    }
+                }
+                return true
+            }
+            R.id.action_cloth_delete -> {
+
+                CoroutineScope(Dispatchers.IO).launch {
+                    val clothesDao = db.clothesDao()
+                    clothesDao.deleteCloth(cloth)
+                }
+                return true
+            }
+            else ->
+                return false
+        }
     }
 
     private var inEditionClothId: Long = 0
 
     fun updateCloth(name: String, category: String, count: Int, weight: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val categoriesDao = db.categoriesDao()
-            val categoryId = categoriesDao.getIdByName(category, tripId)
-
-            val clothesDao = db.clothesDao()
-            val cloth = clothesDao.getClothById(inEditionClothId)
-            clothesDao.updateCloth(
-                Cloth(
-                    uid = inEditionClothId,
-                    name = name,
-                    isChecked = cloth.isChecked,
-                    weight = weight.toDouble(),
-                    count = count,
-                    categoryId = categoryId,
-                    tripId = cloth.tripId
-                )
-            )
+            updateClothForDB(name, category, count, weight)
 
             launch(Dispatchers.Main) {
                 viewState.hideEditClothCard()
             }
         }
+    }
+
+    private fun updateClothForDB(name: String, category: String, count: Int, weight: String) {
+        val categoriesDao = db.categoriesDao()
+        val categoryId = categoriesDao.getIdByName(category, tripId)
+
+        val clothesDao = db.clothesDao()
+        val cloth = clothesDao.getClothById(inEditionClothId)
+        clothesDao.updateCloth(
+            Cloth(
+                uid = inEditionClothId,
+                name = name,
+                isChecked = cloth.isChecked,
+                weight = weight.toDouble(),
+                count = count,
+                categoryId = categoryId,
+                tripId = cloth.tripId
+            )
+        )
     }
 
     fun deleteCategory(categoryName: String) {

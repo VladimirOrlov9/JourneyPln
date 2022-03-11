@@ -57,8 +57,9 @@ class AboutTripFragment : MvpAppCompatFragment(), AboutTripView {
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+
+    override fun onResume() {
+        super.onResume()
 
         presenter.getInfoAboutTrip(tripId)
     }
