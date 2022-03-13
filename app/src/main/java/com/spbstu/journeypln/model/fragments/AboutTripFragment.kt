@@ -83,12 +83,6 @@ class AboutTripFragment : MvpAppCompatFragment(), AboutTripView {
         presenter.initDb(db)
     }
 
-    override fun onStart() {
-        super.onStart()
-
-        (activity as MainActivity).supportActionBar?.title = "Информация о поездке"
-    }
-
     private fun init(view: View) {
         imageImg = view.findViewById(R.id.trip_image)
         editTripBtn = view.findViewById(R.id.edit_trip_btn)

@@ -12,10 +12,10 @@ interface TodoTasksDao {
     @Insert
     fun insertTask(task: TodoTask)
 
-    @Query("SELECT COUNT(*) FROM Cloth WHERE :id = tripId")
+    @Query("SELECT COUNT(*) FROM TodoTask WHERE :id = tripId")
     fun countAbsoluteNumberOfTasks(id: Long): Int
 
-    @Query("SELECT COUNT(*) FROM Cloth WHERE :id = tripId AND isChecked = 1")
+    @Query("SELECT COUNT(*) FROM TodoTask WHERE :id = tripId AND isChecked = 1")
     fun countNumberOfCheckedTasks(id: Long): Int
 
     @Query("SELECT * FROM TodoTask WHERE :tripId = tripId ORDER BY time")

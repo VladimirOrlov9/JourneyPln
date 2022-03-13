@@ -5,7 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.navigation.Navigation
+import androidx.navigation.findNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupWithNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,6 +33,7 @@ class TripsListFragment: MvpAppCompatFragment(), TripsListView {
     lateinit var presenter:  TripsListPresenter
 
     private lateinit var mRecyclerView: RecyclerView
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +60,7 @@ class TripsListFragment: MvpAppCompatFragment(), TripsListView {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_trips_list, container, false)
         init(view)
+
         presenter.initList()
 
         enableSwipeToDeleteAndUndo()
@@ -92,9 +99,10 @@ class TripsListFragment: MvpAppCompatFragment(), TripsListView {
             .show()
     }
 
-    override fun openClickedTrip(id: Long) {
+    override fun openClickedTrip(id: Long, name: String) {
         val bundle = Bundle()
         bundle.putLong("id", id)
+        bundle.putString("name", name)
         Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.thisTripFragment, bundle)
     }
 
@@ -102,7 +110,6 @@ class TripsListFragment: MvpAppCompatFragment(), TripsListView {
         val swipeToDeleteCallback = object : SwipeToDeleteCallback(requireContext()) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val position = viewHolder.adapterPosition
-                println(position)
 
                 presenter.deleteElement(position)
             }

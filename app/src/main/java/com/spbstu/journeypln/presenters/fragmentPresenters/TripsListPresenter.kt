@@ -42,7 +42,7 @@ class TripsListPresenter: MvpPresenter<TripsListView>() {
                 mTripsAdapter =
                     TripsRecyclerAdapter(context = applicationContext, trips = tripsList,
                         onClickListener = { _, trip ->
-                            viewState.openClickedTrip(trip.uid)
+                            viewState.openClickedTrip(trip.uid, trip.name)
                         })
                 viewState.setUpAdapter(mTripsAdapter)
             }

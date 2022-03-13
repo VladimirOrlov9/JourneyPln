@@ -21,4 +21,6 @@ interface AboutTripView: MvpView {
 
     @StateStrategyType(value = AddToEndSingleStrategy::class)
     fun updateProgressTodoChecked(checked: Int, sum: Int)
+
+
 }

@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import androidx.core.content.FileProvider
+import androidx.core.net.toUri
 import androidx.core.util.Pair
 import com.spbstu.journeypln.data.room.databases.TripsDb
 import com.spbstu.journeypln.data.room.entities.Trip
@@ -58,6 +59,8 @@ class EditTripPresenter: MvpPresenter<EditTripView>() {
                         weight = trip.weight
                     )
                 }
+
+                imageUri = trip.imageUri.toUri()
             }
         }
     }
@@ -169,7 +172,7 @@ class EditTripPresenter: MvpPresenter<EditTripView>() {
             imageUri = imageUri.toString(), placeName = currentTrip!!.placeName)
 
             launch(Dispatchers.Main) {
-                viewState.showToast("Successfully updated!")
+//                viewState.showToast("Successfully updated!")
                 viewState.getBackByNavController()
             }
         }

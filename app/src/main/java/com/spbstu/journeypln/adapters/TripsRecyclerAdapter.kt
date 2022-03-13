@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.spbstu.journeypln.R
 import com.spbstu.journeypln.data.room.entities.Trip
 import com.squareup.picasso.Picasso
@@ -31,6 +32,7 @@ class TripsRecyclerAdapter(
         val tripName: TextView = view.findViewById(R.id.trip_name)
         val tripDuration: TextView = view.findViewById(R.id.trip_duration)
         val tripInfo: TextView = view.findViewById(R.id.trip_info)
+        val tripDestination: TextView = view.findViewById(R.id.trip_destination)
 
     }
 
@@ -51,10 +53,10 @@ class TripsRecyclerAdapter(
         holder.tripDuration.text = duration
 
         holder.tripInfo.text = currentTrip.description
+        holder.tripDestination.text = currentTrip.placeName
 
-        Picasso.with(mContext)
+        Glide.with(mContext)
             .load(currentTrip.imageUri)
-            .fit()
             .centerCrop()
             .into(holder.tripImage)
         holder.tripImage.clipToOutline = true

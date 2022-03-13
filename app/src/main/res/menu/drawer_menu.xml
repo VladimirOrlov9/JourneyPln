@@ -1,40 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <group
-        android:id="@+id/gr1"
-        android:checkableBehavior="single"
-        android:menuCategory="container">
-        <item
-            android:id="@+id/creationNewTripFragment"
-            android:title="@string/create_trip" />
-        <item
-            android:id="@+id/thisTripFragment"
-            android:title="@string/current_trip" />
-        <item
-            android:id="@+id/allTripsFragment"
-            android:title="@string/all_trips" />
-    </group>
+    <item
+        android:id="@+id/allTripsFragment"
+        android:title="@string/all_trips"
+        android:icon="@drawable/baseline_view_stream_24"
+        android:enabled="true"/>
 
-    <group
-        android:id="@+id/gr2"
-        android:checkableBehavior="single"
-        android:menuCategory="container">
-        <item
-            android:id="@+id/tripsFragment"
-            android:title="@string/trips" />
-        <item
-            android:id="@+id/hotelsFragment"
-            android:title="@string/hotels" />
-    </group>
+    <item
+        android:id="@+id/creationNewTripFragment"
+        android:title="@string/create_trip"
+        android:icon="@drawable/baseline_add_box_24"
+        android:enabled="true"/>
 
-    <group
-        android:id="@+id/gr3"
-        android:checkableBehavior="single"
-        android:menuCategory="container">
-        <item
-            android:id="@+id/aboutFragment"
-            android:title="@string/about" />
-    </group>
+    <item
+        android:id="@+id/aboutFragment"
+        android:title="@string/about"
+        android:icon="@drawable/baseline_info_24"
+        android:enabled="true"/>
 
 </menu>
