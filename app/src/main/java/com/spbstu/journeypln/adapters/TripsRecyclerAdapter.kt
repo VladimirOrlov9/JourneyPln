@@ -17,7 +17,8 @@ import java.util.*
 class TripsRecyclerAdapter(
     context: Context,
     trips: List<Trip>,
-    val onClickListener: (View, Trip) -> Unit
+    val onClickListener: (View, Trip) -> Unit,
+    val onNoItems: (Int) -> Unit
 ): RecyclerView.Adapter<TripsRecyclerAdapter.MyViewHolder>() {
     private var mTrips: MutableList<Trip> = trips.toMutableList()
     private val mContext: Context = context
@@ -73,13 +74,27 @@ class TripsRecyclerAdapter(
     fun removeItem(position: Int) {
         mTrips.removeAt(position)
         notifyItemRemoved(position)
+
+        if (mTrips.size == 0)
+            onNoItems.invoke(View.VISIBLE)
     }
 
     fun restoreItem(trip: Trip, position: Int) {
         mTrips.add(position, trip)
         notifyItemInserted(position)
+
+        if (mTrips.size > 0)
+            onNoItems.invoke(View.GONE)
     }
 
     fun getData(): List<Trip?> = mTrips
 
+    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+        super.onAttachedToRecyclerView(recyclerView)
+
+        if (mTrips.size == 0)
+            onNoItems.invoke(View.VISIBLE)
+        else
+            onNoItems.invoke(View.GONE)
+    }
 }

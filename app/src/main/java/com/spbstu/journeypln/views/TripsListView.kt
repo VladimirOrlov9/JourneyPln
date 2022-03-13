@@ -1,5 +1,6 @@
 package com.spbstu.journeypln.views
 
+import android.view.View
 import com.spbstu.journeypln.adapters.TripsRecyclerAdapter
 import moxy.MvpView
 import moxy.viewstate.strategy.AddToEndSingleStrategy
@@ -16,4 +17,6 @@ interface TripsListView: MvpView {
     fun showSnackBarDeletedItem(text: String)
     @StateStrategyType(value = SkipStrategy::class)
     fun openClickedTrip(id: Long, name: String)
+    @StateStrategyType(value = SkipStrategy::class)
+    fun updateVisibility(visibility: Int)
 }

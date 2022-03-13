@@ -9,4 +9,6 @@
 
     <color name="login_up">#384E78</color>
     <color name="login_down">#5874DC</color>
+
+    <color name="images">#787878</color>
 </resources>

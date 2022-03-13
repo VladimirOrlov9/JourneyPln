@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.navigation.Navigation
 import androidx.navigation.findNavController
@@ -33,6 +34,7 @@ class TripsListFragment: MvpAppCompatFragment(), TripsListView {
     lateinit var presenter:  TripsListPresenter
 
     private lateinit var mRecyclerView: RecyclerView
+    private lateinit var noTripsElement: LinearLayoutCompat
 
 
 
@@ -72,6 +74,8 @@ class TripsListFragment: MvpAppCompatFragment(), TripsListView {
         mRecyclerView = view.findViewById(R.id.recycler)
         mRecyclerView.hasFixedSize()
         mRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+
+        noTripsElement = view.findViewById(R.id.no_trips)
     }
 
     override fun showToast(text: String) {
@@ -104,6 +108,10 @@ class TripsListFragment: MvpAppCompatFragment(), TripsListView {
         bundle.putLong("id", id)
         bundle.putString("name", name)
         Navigation.findNavController(requireParentFragment().requireView()).navigate(R.id.thisTripFragment, bundle)
+    }
+
+    override fun updateVisibility(visibility: Int) {
+        noTripsElement.visibility = visibility
     }
 
     private fun enableSwipeToDeleteAndUndo() {

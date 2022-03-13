@@ -70,4 +70,5 @@
     <string name="current_trip">Current trip</string>
     <string name="create_trip">Create trip</string>
     <string name="about_text">For feedback, use this email:</string>
+    <string name="no_trips_yet">There are no trips yet..</string>
 </resources>
