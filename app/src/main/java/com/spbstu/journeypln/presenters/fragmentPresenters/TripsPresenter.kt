@@ -17,7 +17,7 @@ class TripsPresenter: MvpPresenter<TripsView>() {
 
     private lateinit var db: TripsDb
 
-    private val outputDateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).apply {
+    val outputDateFormat = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).apply {
         timeZone = TimeZone.getTimeZone("UTC")
     }
 

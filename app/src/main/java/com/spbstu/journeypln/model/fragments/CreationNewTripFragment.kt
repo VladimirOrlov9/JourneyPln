@@ -24,6 +24,7 @@ import java.io.FileNotFoundException
 
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.core.util.toKotlinPair
 import com.bumptech.glide.Glide
 
 
@@ -122,11 +123,11 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
         }
 
         cameraButton.setOnClickListener {
-            presenter.openCamera()
+            presenter.openCamera(System.currentTimeMillis())
         }
 
         galleryButton.setOnClickListener {
-            presenter.openGallery()
+            presenter.openGallery(System.currentTimeMillis())
         }
 
         return view
@@ -161,7 +162,7 @@ class CreationNewTripFragment: MvpAppCompatFragment(), CreationNewTripView {
             dateRangePicker.addOnPositiveButtonClickListener {
                 val selection = dateRangePicker.selection
                 if (selection != null) {
-                    presenter.updateDate(selection)
+                    presenter.updateDate(selection.toKotlinPair())
                     presenter.showDate()
                 }
             }

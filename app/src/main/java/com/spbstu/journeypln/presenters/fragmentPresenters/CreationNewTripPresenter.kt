@@ -21,6 +21,8 @@ import java.util.*
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.os.Build
+import android.util.Pair
+import org.jetbrains.annotations.TestOnly
 import java.io.*
 import java.io.IOException
 
@@ -31,7 +33,7 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
     private var startDate: Long = System.currentTimeMillis()
     private var endDate: Long = System.currentTimeMillis()
     private lateinit var fileName: String
-    private lateinit var imageUri: Uri
+    lateinit var imageUri: Uri
 
     private val defCategoriesList: List<String> = listOf("Верхняя одежда", "Одежда", "Нижнее белье", "Документы")
 
@@ -48,12 +50,11 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
     }
 
     @Throws(IOException::class)
-    private fun createImageFile(): File {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(Date())
+    fun createImageFile(timeInMillis: Long): File {
         val storageDir: File = applicationContext.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!
 
         return File.createTempFile(
-            "JPEG_${timeStamp}_", /* prefix */
+            "JPEG_${timeInMillis}_", /* prefix */
             ".jpg", /* suffix */
             storageDir /* directory */
         ).apply {
@@ -62,13 +63,17 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
     }
 
 
-    fun openCamera() {
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+    fun openCamera(timeInMillis: Long) {
+        viewState.startTakePictureIntent(generateIntentForCamera(timeInMillis))
+    }
+
+    private fun generateIntentForCamera(timeInMillis: Long): Intent {
+        return Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             // Ensure that there's a camera activity to handle the intent
             takePictureIntent.resolveActivity(applicationContext.packageManager)?.also {
                 // Create the File where the photo should go
                 val photoFile: File? = try {
-                    createImageFile()
+                    createImageFile(timeInMillis)
                 } catch (ex: IOException) {
                     // Error occurred while creating the File
 
@@ -82,19 +87,22 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
                         it
                     )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, imageUri)
-                    viewState.startTakePictureIntent(takePictureIntent)
                 }
             }
         }
     }
 
-    fun openGallery() {
-        Intent(Intent.ACTION_PICK).also { takePictureIntent ->
+    fun openGallery(timeInMillis: Long) {
+        viewState.startTakePictureFromGalleryIntent(generateIntentForGallery(timeInMillis))
+    }
+
+    private fun generateIntentForGallery(timeInMillis: Long): Intent {
+        return Intent(Intent.ACTION_PICK).also { takePictureIntent ->
             // Ensure that there's a camera activity to handle the intent
             takePictureIntent.resolveActivity(applicationContext.packageManager)?.also {
                 // Create the File where the photo should go
                 val photoFile: File? = try {
-                    createImageFile()
+                    createImageFile(timeInMillis)
                 } catch (ex: IOException) {
                     // Error occurred while creating the File
 
@@ -108,7 +116,6 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
                         it
                     )
                     takePictureIntent.type = "image/*"
-                    viewState.startTakePictureFromGalleryIntent(takePictureIntent)
                 }
             }
         }
@@ -201,7 +208,7 @@ class CreationNewTripPresenter: MvpPresenter<CreationNewTripView>() {
         viewState.setTripDate(date)
     }
 
-    fun updateDate(date: androidx.core.util.Pair<Long, Long>) {
+    fun updateDate(date: kotlin.Pair<Long, Long>) {
         startDate = date.first
         endDate = date.second
     }

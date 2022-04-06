@@ -1,11 +1,12 @@
 package com.spbstu.journeypln.presenters.fragmentPresenters
 
-import android.content.Context
 import android.view.MenuItem
 import android.widget.CheckBox
 import android.widget.PopupMenu
 import com.spbstu.journeypln.R
 import com.spbstu.journeypln.adapters.ClothesRecyclerAdapter
+import com.spbstu.journeypln.data.room.dao.CategoriesDao
+import com.spbstu.journeypln.data.room.dao.ClothesDao
 import com.spbstu.journeypln.data.room.databases.TripsDb
 import com.spbstu.journeypln.data.room.entities.Category
 import com.spbstu.journeypln.data.room.entities.Cloth
@@ -13,20 +14,26 @@ import com.spbstu.journeypln.views.ClothesView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import moxy.MvpPresenter
 
 class ClothesPresenter: MvpPresenter<ClothesView>() {
-
-    private lateinit var context: Context
-
     private var tripId: Long = 0
     private lateinit var mClothesAdapter: ClothesRecyclerAdapter
     private var clothesList: List<Cloth> = listOf()
     private lateinit var db: TripsDb
+    private lateinit var categoriesDao: CategoriesDao
+    private lateinit var clothesDao: ClothesDao
 
-    fun setApplicationContext(context: Context, db: TripsDb) {
-        this.context = context
+    fun initDb(db: TripsDb) {
         this.db = db
+        this.categoriesDao = db.categoriesDao()
+        this.clothesDao = db.clothesDao()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        db.close()
     }
 
     fun setTripId(id: Long) {
@@ -35,14 +42,21 @@ class ClothesPresenter: MvpPresenter<ClothesView>() {
 
     fun addNewCategory(categoryName: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val categoriesDao = db.categoriesDao()
-            categoriesDao.insertCategory(Category(name = categoryName, tripId = tripId))
+            val isCategoryExist = categoriesDao.isCategoryExist(categoryName)
+
+            if (isCategoryExist == 0) {
+                categoriesDao.insertCategory(Category(name = categoryName, tripId = tripId))
+            }
+            else {
+                launch(Dispatchers.Main) {
+                    viewState.showToast("Such category already exist!")
+                }
+            }
         }
     }
 
     fun loadCategories() {
         CoroutineScope(Dispatchers.IO).launch {
-            val categoriesDao = db.categoriesDao()
             val categories = categoriesDao.getCategories(tripId)
 
             launch(Dispatchers.Main) {
@@ -53,21 +67,17 @@ class ClothesPresenter: MvpPresenter<ClothesView>() {
 
     fun addNewCloth(clothName: String, category: String, weight: String, count: Int) {
 
-        CoroutineScope(Dispatchers.IO).launch {
-            addNewClothToDB(clothName, category, weight, count)
+        runBlocking {
+            val job = addNewClothToDB(clothName, category, weight, count)
+            job.join()
 
-            launch(Dispatchers.Main) {
-                updateRecyclerByCategory(category)
-                viewState.hideClothCard()
-            }
+            updateRecyclerByCategory(category)
+            viewState.hideClothCard()
         }
     }
 
-    private fun addNewClothToDB(clothName: String, category: String, weight: String, count: Int) {
-        val categoriesDao = db.categoriesDao()
+    private suspend fun addNewClothToDB(clothName: String, category: String, weight: String, count: Int) = CoroutineScope(Dispatchers.IO).launch {
         val categoryId = categoriesDao.getIdByName(category, tripId)
-
-        val clothesDao = db.clothesDao()
         val clothExist = clothesDao.ifClothWithSuchNameExist(tripId, clothName, weight.toDouble())
 
         if (clothExist == 0) {
@@ -86,10 +96,7 @@ class ClothesPresenter: MvpPresenter<ClothesView>() {
 
     fun updateRecyclerByCategory(category: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val categoriesDao = db.categoriesDao()
             val categoryId = categoriesDao.getIdByName(category, tripId)
-
-            val clothesDao = db.clothesDao()
 
             val clothes: List<Cloth> = if (category != "") {
                 clothesDao.getClothesByCategoryId(categoryId, tripId)
@@ -111,7 +118,6 @@ class ClothesPresenter: MvpPresenter<ClothesView>() {
                 val b = (compoundButton as CheckBox).isChecked
 
                 CoroutineScope(Dispatchers.IO).launch {
-                    val clothesDao = db.clothesDao()
                     clothesDao.updateCheckup(b, cloth.uid)
                 }
             },
@@ -125,13 +131,13 @@ class ClothesPresenter: MvpPresenter<ClothesView>() {
             })
         viewState.setUpAdapter(mClothesAdapter)
     }
+
     private fun menuActionsSetup(item: MenuItem, cloth: Cloth): Boolean {
         when (item.itemId) {
             R.id.action_cloth_edit -> {
                 inEditionClothId = cloth.uid
 
                 CoroutineScope(Dispatchers.IO).launch {
-                    val categoriesDao = db.categoriesDao()
                     val categoryName = categoriesDao.getNameById(cloth.categoryId)
 
                     launch(Dispatchers.Main) {
@@ -146,7 +152,6 @@ class ClothesPresenter: MvpPresenter<ClothesView>() {
             R.id.action_cloth_delete -> {
 
                 CoroutineScope(Dispatchers.IO).launch {
-                    val clothesDao = db.clothesDao()
                     clothesDao.deleteCloth(cloth)
                 }
                 return true
@@ -169,10 +174,8 @@ class ClothesPresenter: MvpPresenter<ClothesView>() {
     }
 
     private fun updateClothForDB(name: String, category: String, count: Int, weight: String) {
-        val categoriesDao = db.categoriesDao()
         val categoryId = categoriesDao.getIdByName(category, tripId)
 
-        val clothesDao = db.clothesDao()
         val cloth = clothesDao.getClothById(inEditionClothId)
         clothesDao.updateCloth(
             Cloth(
@@ -189,10 +192,8 @@ class ClothesPresenter: MvpPresenter<ClothesView>() {
 
     fun deleteCategory(categoryName: String) {
         CoroutineScope(Dispatchers.IO).launch {
-            val categoriesDao = db.categoriesDao()
             val categoryId = categoriesDao.getIdByName(categoryName, tripId)
 
-            val clothesDao = db.clothesDao()
             clothesDao.deleteByCategory(categoryId)
             categoriesDao.deleteByUid(categoryId)
 

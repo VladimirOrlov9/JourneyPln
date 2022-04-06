@@ -37,4 +37,8 @@ interface TripsDao {
                     imageUri = :imageUri, placeName = :placeName WHERE uid = :uid""")
     fun updateTrip(uid: Long, name: String, description: String, weight: Double,
                    startDate: Long, endDate: Long, imageUri: String, placeName: String)
+
+    @Query("""SELECT * FROM Trip WHERE name = :name AND description = :description
+         AND weight = :weight AND placeName = :destination LIMIT 1""")
+    fun existTrip(name: String, description: String, weight: Double, destination: String): Trip?
 }

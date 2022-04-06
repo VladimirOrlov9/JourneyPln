@@ -22,4 +22,7 @@ interface CategoriesDao {
 
     @Query("DELETE FROM Category WHERE uid = :uid")
     fun deleteByUid(uid: Long)
+
+    @Query("SELECT COUNT(*) FROM Category WHERE name = :name")
+    fun isCategoryExist(name: String): Int
 }

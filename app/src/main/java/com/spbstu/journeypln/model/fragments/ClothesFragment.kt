@@ -74,7 +74,7 @@ class ClothesFragment : MvpAppCompatFragment(), ClothesView {
             .fallbackToDestructiveMigration()
             .build()
 
-        presenter.setApplicationContext(requireContext(), db)
+        presenter.initDb(db)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
